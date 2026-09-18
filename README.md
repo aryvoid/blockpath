@@ -17,11 +17,16 @@ npm run dev
 
 - Paste F3 / HUD / `/tp` coordinates
 - 3D + horizontal distance, chunks, deltas
-- North-up compass and relative map
-- Travel times (walk, horse, ice boat, elytra)
+- North-up compass and relative heading
+- Travel times (walk, sprint, horse, ice boat, elytra)
 - Nether X/Z pairing
 - Saved waypoints in the browser
 
 ## Stack
 
 React 19, TanStack Start, Tailwind CSS v4.
+
+## Deploy (Vercel)
+
+Connect the repo to Vercel. Framework preset can be Vite / Other.  
+Build command: `npm run build`

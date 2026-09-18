@@ -8,3 +8,7 @@ attachments
 *.log
 .env
 .env.*
+.output
+dist
+.DS_Store
+src/routeTree.gen.ts
