@@ -11,7 +11,27 @@ const SITE_URL = "https://blockpath.vercel.app";
 const TITLE = "Blockpath — Minecraft Coordinate Calculator";
 const DESCRIPTION =
   "Free Minecraft coordinate distance calculator. Get horizontal & 3D distance, compass heading, travel time (walk, horse, ice boat, elytra), Nether pairing, relative map, and save waypoints.";
-const OG_IMAGE = `${SITE_URL}/og.png`;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Blockpath",
+  url: SITE_URL,
+  description: DESCRIPTION,
+  applicationCategory: "UtilityApplication",
+  operatingSystem: "Any",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  author: {
+    "@type": "Person",
+    name: "aryvoid",
+    url: "https://github.com/aryvoid",
+  },
+  keywords: "Minecraft, coordinates, distance calculator, Nether, waypoints",
+};
 
 export const Route = createRootRoute({
   head: () => ({
@@ -30,23 +50,15 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#0e120e" },
       { name: "robots", content: "index, follow" },
       { name: "googlebot", content: "index, follow" },
-      // Open Graph
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Blockpath" },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESCRIPTION },
       { property: "og:url", content: SITE_URL },
       { property: "og:locale", content: "en_US" },
-      { property: "og:image", content: OG_IMAGE },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "Blockpath Minecraft coordinate calculator" },
-      // Twitter
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESCRIPTION },
-      { name: "twitter:image", content: OG_IMAGE },
-      { name: "twitter:creator", content: "@aryvoid" },
     ],
     links: [
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
@@ -56,27 +68,7 @@ export const Route = createRootRoute({
     scripts: [
       {
         type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebApplication",
-          name: "Blockpath",
-          url: SITE_URL,
-          description: DESCRIPTION,
-          applicationCategory: "UtilityApplication",
-          operatingSystem: "Any",
-          offers: {
-            "@type": "Offer",
-            price: "0",
-            priceCurrency: "USD",
-          },
-          author: {
-            "@type": "Person",
-            name: "aryvoid",
-            url: "https://github.com/aryvoid",
-          },
-          keywords:
-            "Minecraft, coordinates, distance calculator, Nether, waypoints",
-        }),
+        children: JSON.stringify(jsonLd),
       },
     ],
   }),
