@@ -50,6 +50,10 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#0e120e" },
       { name: "robots", content: "index, follow" },
       { name: "googlebot", content: "index, follow" },
+      {
+        name: "google-site-verification",
+        content: "RwqqJOYj66i824pR4M1AnHwinUUJOtHLIhH1sxB7G4I",
+      },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Blockpath" },
       { property: "og:title", content: TITLE },
