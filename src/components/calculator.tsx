@@ -90,20 +90,19 @@ export function Calculator() {
   };
 
   return (
-    <div className="relative z-10 mx-auto flex min-h-dvh max-w-3xl flex-col gap-6 px-4 py-8 sm:px-6">
+    <div className="relative z-10 mx-auto flex min-h-dvh max-w-3xl flex-col gap-5 px-4 py-8 sm:px-6">
       <header className="text-center">
-        <h1 className="text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
+        <h1 className="text-3xl font-bold tracking-tight text-fg drop-shadow-sm sm:text-4xl">
           Blockpath
         </h1>
-        <p className="mt-1 text-sm text-muted">
+        <p className="mt-1.5 text-sm text-muted">
           Minecraft coordinate distance · heading · travel time · Nether pairing
         </p>
       </header>
 
-      {/* Inputs */}
-      <section className="grid gap-4 rounded-xl border border-border bg-card/80 p-4 backdrop-blur-sm sm:grid-cols-2">
+      <section className="grid gap-3 rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium uppercase tracking-wider text-muted">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
             From (current)
           </span>
           <input
@@ -111,14 +110,14 @@ export function Calculator() {
             onChange={(e) => setFromRaw(e.target.value)}
             placeholder="x y z  or  paste F3"
             className={cn(
-              "rounded-lg border border-border bg-bg px-3 py-2.5 font-mono text-sm outline-none transition",
-              "focus:border-accent focus:ring-1 focus:ring-accent",
+              "rounded-xl border border-border bg-bg/80 px-3.5 py-2.5 font-mono text-sm outline-none transition",
+              "placeholder:text-muted/50 focus:border-accent focus:ring-2 focus:ring-accent/30",
               !from && fromRaw.trim() && "border-red-500/60",
             )}
           />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium uppercase tracking-wider text-muted">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
             To (destination)
           </span>
           <input
@@ -126,200 +125,102 @@ export function Calculator() {
             onChange={(e) => setToRaw(e.target.value)}
             placeholder="x y z  or  paste F3"
             className={cn(
-              "rounded-lg border border-border bg-bg px-3 py-2.5 font-mono text-sm outline-none transition",
-              "focus:border-accent focus:ring-1 focus:ring-accent",
+              "rounded-xl border border-border bg-bg/80 px-3.5 py-2.5 font-mono text-sm outline-none transition",
+              "placeholder:text-muted/50 focus:border-accent focus:ring-2 focus:ring-accent/30",
               !to && toRaw.trim() && "border-red-500/60",
             )}
           />
         </label>
       </section>
 
-      {/* Results */}
       {stats ? (
         <section className="grid gap-4">
-          {/* Distance cards */}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Stat
-              label="Horizontal"
-              value={`${formatCoord(stats.horiz)}`}
-              sub={`${formatCoord(stats.chunkH)} chunks`}
-            />
-            <Stat
-              label="3D distance"
-              value={`${formatCoord(stats.dist3)}`}
-              sub={`${formatCoord(stats.chunk3)} chunks`}
-            />
-            <Stat
-              label="Heading"
-              value={`${formatCoord(stats.yaw, 0)}°`}
-              sub={stats.dir}
-            />
-            <Stat
-              label="Δ X / Y / Z"
-              value={`${formatCoord(stats.d.x)} / ${formatCoord(stats.d.y)} / ${formatCoord(stats.d.z)}`}
-              mono
-            />
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+            <Stat label="Horizontal" value={formatCoord(stats.horiz)} sub={`${formatCoord(stats.chunkH)} chunks`} />
+            <Stat label="3D distance" value={formatCoord(stats.dist3)} sub={`${formatCoord(stats.chunk3)} chunks`} />
+            <Stat label="Heading" value={`${formatCoord(stats.yaw, 0)}°`} sub={stats.dir} />
+            <Stat label="Δ X / Y / Z" value={`${formatCoord(stats.d.x)} / ${formatCoord(stats.d.y)} / ${formatCoord(stats.d.z)}`} mono />
           </div>
 
-          {/* Compass */}
-          <div className="flex items-center justify-center gap-6 rounded-xl border border-border bg-card/80 p-4">
-            <Compass yaw={stats.yaw} />
-            <div className="text-sm text-muted">
-              <div>
-                Face{" "}
-                <span className="font-semibold text-accent">{stats.dir}</span>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="flex items-center justify-center gap-5 rounded-2xl border border-border/80 bg-card/70 p-5 shadow-xl backdrop-blur-md">
+              <Compass yaw={stats.yaw} />
+              <div className="text-sm">
+                <div className="text-muted">
+                  Face <span className="font-bold text-accent">{stats.dir}</span>
+                </div>
+                <div className="mt-1 font-mono text-lg text-fg">{formatCoord(stats.yaw, 1)}°</div>
+                <div className="mt-0.5 text-xs text-muted">Minecraft yaw</div>
               </div>
-              <div className="mt-0.5 font-mono text-fg">
-                Yaw {formatCoord(stats.yaw, 1)}°
-              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md">
+              <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted">
+                Relative map (N ↑)
+              </h2>
+              <RelativeMap from={from!} to={to!} />
             </div>
           </div>
 
-          {/* Travel times */}
-          <div className="rounded-xl border border-border bg-card/80 p-4">
-            <h2 className="mb-3 text-xs font-medium uppercase tracking-wider text-muted">
-              Travel time (approx)
+          <div className="rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md">
+            <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
+              Travel time (approx · horizontal)
             </h2>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {(
-                [
-                  ["Walk", SPEEDS.walk],
-                  ["Sprint", SPEEDS.sprint],
-                  ["Horse", SPEEDS.horse],
-                  ["Ice boat", SPEEDS.iceBoat],
-                  ["Elytra", SPEEDS.elytra],
-                ] as const
-              ).map(([label, speed]) => (
-                <div
-                  key={label}
-                  className="flex items-baseline justify-between rounded-lg bg-bg/60 px-3 py-2"
-                >
+              {([["Walk", SPEEDS.walk], ["Sprint", SPEEDS.sprint], ["Horse", SPEEDS.horse], ["Ice boat", SPEEDS.iceBoat], ["Elytra", SPEEDS.elytra]] as const).map(([label, speed]) => (
+                <div key={label} className="flex items-baseline justify-between rounded-xl bg-bg/50 px-3 py-2.5">
                   <span className="text-sm text-muted">{label}</span>
-                  <span className="font-mono text-sm text-fg">
-                    {formatDuration(travelSeconds(stats.horiz, speed))}
-                  </span>
+                  <span className="font-mono text-sm font-medium text-fg">{formatDuration(travelSeconds(stats.horiz, speed))}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Nether pairing */}
-          <div className="rounded-xl border border-border bg-card/80 p-4">
-            <h2 className="mb-3 text-xs font-medium uppercase tracking-wider text-muted">
+          <div className="rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md">
+            <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
               Nether / Overworld pairing
             </h2>
             <div className="grid gap-3 sm:grid-cols-2">
-              <PairBlock
-                title="Nether coords of these points"
-                a={stats.netherFrom}
-                b={stats.netherTo}
-                labelA="From → Nether"
-                labelB="To → Nether"
-              />
-              <PairBlock
-                title="If these are Nether, Overworld targets"
-                a={stats.owFrom}
-                b={stats.owTo}
-                labelA="From → OW"
-                labelB="To → OW"
-              />
+              <PairBlock title="These coords → Nether" a={stats.netherFrom} b={stats.netherTo} labelA="From" labelB="To" />
+              <PairBlock title="If Nether → Overworld targets" a={stats.owFrom} b={stats.owTo} labelA="From" labelB="To" />
             </div>
           </div>
         </section>
       ) : (
-        <p className="rounded-xl border border-border bg-card/60 px-4 py-6 text-center text-sm text-muted">
-          Paste valid coordinates (e.g. <code className="text-accent">123 64 -456</code> or F3 line) in both fields.
+        <p className="rounded-2xl border border-border/80 bg-card/60 px-4 py-8 text-center text-sm text-muted backdrop-blur-md">
+          Paste valid coordinates (e.g. <code className="rounded bg-bg/60 px-1.5 py-0.5 text-accent">123 64 -456</code> or F3 line) in both fields.
         </p>
       )}
 
-      {/* Waypoints */}
-      <section className="rounded-xl border border-border bg-card/80 p-4">
-        <h2 className="mb-3 text-xs font-medium uppercase tracking-wider text-muted">
-          Saved waypoints
-        </h2>
+      <section className="rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md">
+        <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">Saved waypoints</h2>
         <div className="mb-3 flex flex-wrap gap-2">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Name for current destination"
-            className="min-w-[10rem] flex-1 rounded-lg border border-border bg-bg px-3 py-2 text-sm outline-none focus:border-accent"
-          />
-          <button
-            type="button"
-            onClick={addWaypoint}
-            disabled={!to}
-            className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-bg transition hover:bg-accent-dim disabled:opacity-40"
-          >
-            Save “To”
-          </button>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name for current destination" className="min-w-[10rem] flex-1 rounded-xl border border-border bg-bg/80 px-3 py-2 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/30" />
+          <button type="button" onClick={addWaypoint} disabled={!to} className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-bg transition hover:bg-accent-dim disabled:opacity-40">Save “To”</button>
         </div>
         <ul className="flex flex-col gap-1.5">
           {list.map((w) => (
-            <li
-              key={w.id}
-              className="flex flex-wrap items-center gap-2 rounded-lg bg-bg/50 px-3 py-2 text-sm"
-            >
+            <li key={w.id} className="flex flex-wrap items-center gap-2 rounded-xl bg-bg/40 px-3 py-2 text-sm">
               <span className="min-w-0 flex-1 truncate font-medium">{w.name}</span>
-              <span className="font-mono text-xs text-muted">
-                {w.x} {w.y} {w.z}
-              </span>
-              <button
-                type="button"
-                onClick={() => applyWaypoint(w, "from")}
-                className="rounded px-2 py-0.5 text-xs text-accent hover:bg-accent/10"
-              >
-                From
-              </button>
-              <button
-                type="button"
-                onClick={() => applyWaypoint(w, "to")}
-                className="rounded px-2 py-0.5 text-xs text-accent hover:bg-accent/10"
-              >
-                To
-              </button>
-              <button
-                type="button"
-                onClick={() => removeWaypoint(w.id)}
-                className="rounded px-2 py-0.5 text-xs text-muted hover:bg-red-500/20 hover:text-red-400"
-              >
-                ✕
-              </button>
+              <span className="font-mono text-xs text-muted">{w.x} {w.y} {w.z}</span>
+              <button type="button" onClick={() => applyWaypoint(w, "from")} className="rounded-lg px-2 py-0.5 text-xs font-medium text-accent hover:bg-accent/15">From</button>
+              <button type="button" onClick={() => applyWaypoint(w, "to")} className="rounded-lg px-2 py-0.5 text-xs font-medium text-accent hover:bg-accent/15">To</button>
+              <button type="button" onClick={() => removeWaypoint(w.id)} className="rounded-lg px-2 py-0.5 text-xs text-muted hover:bg-red-500/20 hover:text-red-400">✕</button>
             </li>
           ))}
         </ul>
       </section>
 
-      <footer className="pb-4 text-center text-xs text-muted">
-        Blockpath · coordinates stay in your browser
-      </footer>
+      <footer className="pb-4 text-center text-xs text-muted/80">Blockpath · coordinates stay in your browser</footer>
     </div>
   );
 }
 
-function Stat({
-  label,
-  value,
-  sub,
-  mono,
-}: {
-  label: string;
-  value: string;
-  sub?: string;
-  mono?: boolean;
-}) {
+function Stat({ label, value, sub, mono }: { label: string; value: string; sub?: string; mono?: boolean }) {
   return (
-    <div className="rounded-xl border border-border bg-card/80 px-3 py-3 text-center">
-      <div className="text-[10px] font-medium uppercase tracking-wider text-muted">
-        {label}
-      </div>
-      <div
-        className={cn(
-          "mt-1 text-lg font-semibold tabular-nums text-fg",
-          mono && "font-mono text-sm sm:text-base",
-        )}
-      >
-        {value}
-      </div>
+    <div className="rounded-2xl border border-border/80 bg-card/70 px-3 py-3.5 text-center shadow-lg backdrop-blur-md">
+      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted">{label}</div>
+      <div className={cn("mt-1 text-lg font-bold tabular-nums text-fg", mono && "font-mono text-sm sm:text-base")}>{value}</div>
       {sub && <div className="mt-0.5 text-xs text-muted">{sub}</div>}
     </div>
   );
@@ -327,71 +228,55 @@ function Stat({
 
 function Compass({ yaw }: { yaw: number }) {
   return (
-    <div className="relative size-20 shrink-0">
-      <div className="absolute inset-0 rounded-full border-2 border-border bg-bg/80" />
-      <div className="absolute inset-1 rounded-full border border-border/50" />
+    <div className="relative size-[5.5rem] shrink-0">
+      <div className="absolute inset-0 rounded-full border-2 border-border bg-bg/70 shadow-inner" />
+      <div className="absolute inset-1.5 rounded-full border border-border/40" />
       {["N", "E", "S", "W"].map((d, i) => (
-        <span
-          key={d}
-          className="absolute text-[10px] font-bold text-muted"
-          style={{
-            top: i === 0 ? 2 : i === 2 ? "auto" : "50%",
-            bottom: i === 2 ? 2 : undefined,
-            left: i === 3 ? 4 : i === 1 ? "auto" : "50%",
-            right: i === 1 ? 4 : undefined,
-            transform:
-              i === 0 || i === 2
-                ? "translateX(-50%)"
-                : "translateY(-50%)",
-          }}
-        >
+        <span key={d} className={cn("absolute text-[11px] font-bold", d === "N" ? "text-accent" : "text-muted")}
+          style={{ top: i === 0 ? 3 : i === 2 ? "auto" : "50%", bottom: i === 2 ? 3 : undefined, left: i === 3 ? 5 : i === 1 ? "auto" : "50%", right: i === 1 ? 5 : undefined, transform: i === 0 || i === 2 ? "translateX(-50%)" : "translateY(-50%)" }}>
           {d}
         </span>
       ))}
-      <div
-        className="absolute left-1/2 top-1/2 origin-bottom"
-        style={{
-          transform: `translate(-50%, -100%) rotate(${yaw + 180}deg)`,
-          height: "36%",
-          width: 3,
-        }}
-      >
-        <div className="h-full w-full rounded-full bg-accent shadow-[0_0_6px_var(--color-accent)]" />
+      <div className="absolute left-1/2 top-1/2 origin-bottom" style={{ transform: `translate(-50%, -100%) rotate(${yaw + 180}deg)`, height: "38%", width: 3 }}>
+        <div className="h-full w-full rounded-full bg-accent shadow-[0_0_8px_var(--color-accent)]" />
       </div>
-      <div className="absolute left-1/2 top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-fg" />
+      <div className="absolute left-1/2 top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-bg bg-fg" />
     </div>
   );
 }
 
-function PairBlock({
-  title,
-  a,
-  b,
-  labelA,
-  labelB,
-}: {
-  title: string;
-  a: Vec3;
-  b: Vec3;
-  labelA: string;
-  labelB: string;
-}) {
+function RelativeMap({ from, to }: { from: Vec3; to: Vec3 }) {
+  const d = delta(from, to);
+  const max = Math.max(Math.abs(d.x), Math.abs(d.z), 1);
+  const pad = 18;
+  const size = 140;
+  const cx = size / 2;
+  const cy = size / 2;
+  const scale = (size / 2 - pad) / max;
+  const tx = cx + d.x * scale;
+  const ty = cy + d.z * scale;
+
   return (
-    <div>
+    <svg viewBox={`0 0 ${size} ${size}`} className="mx-auto size-[9rem] rounded-xl bg-bg/40">
+      <line x1={cx} y1={0} x2={cx} y2={size} stroke="currentColor" className="text-border" strokeWidth="1" />
+      <line x1={0} y1={cy} x2={size} y2={cy} stroke="currentColor" className="text-border" strokeWidth="1" />
+      <text x={cx} y={10} textAnchor="middle" className="fill-accent text-[9px] font-bold">N</text>
+      <line x1={cx} y1={cy} x2={tx} y2={ty} stroke="currentColor" className="text-accent/60" strokeWidth="2" strokeDasharray="4 3" />
+      <circle cx={cx} cy={cy} r="5" className="fill-fg" />
+      <text x={cx} y={cy - 9} textAnchor="middle" className="fill-muted text-[8px]">You</text>
+      <circle cx={tx} cy={ty} r="5" className="fill-accent" />
+      <text x={tx} y={ty - 9} textAnchor="middle" className="fill-accent text-[8px]">Dest</text>
+    </svg>
+  );
+}
+
+function PairBlock({ title, a, b, labelA, labelB }: { title: string; a: Vec3; b: Vec3; labelA: string; labelB: string }) {
+  return (
+    <div className="rounded-xl bg-bg/40 p-3">
       <div className="mb-1.5 text-xs text-muted">{title}</div>
       <div className="space-y-1 font-mono text-sm">
-        <div>
-          <span className="text-muted">{labelA}: </span>
-          <span className="text-fg">
-            {a.x} {a.y} {a.z}
-          </span>
-        </div>
-        <div>
-          <span className="text-muted">{labelB}: </span>
-          <span className="text-fg">
-            {b.x} {b.y} {b.z}
-          </span>
-        </div>
+        <div><span className="text-muted">{labelA}: </span><span className="text-fg">{a.x} {a.y} {a.z}</span></div>
+        <div><span className="text-muted">{labelB}: </span><span className="text-fg">{b.x} {b.y} {b.z}</span></div>
       </div>
     </div>
   );
