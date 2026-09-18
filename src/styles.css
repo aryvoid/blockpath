@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0c0e0b;
-  --color-fg: #eef0e6;
-  --color-muted: #9aa391;
-  --color-card: #141714;
-  --color-border: #2a3026;
+  --color-bg: #0e120e;
+  --color-fg: #f2f0e6;
+  --color-muted: #a8b09a;
+  --color-card: #161c16;
+  --color-border: #2c362c;
   --color-accent: #8fba6b;
   --color-accent-dim: #6a8f4f;
   --color-warn: #e8c36a;
@@ -32,4 +32,14 @@ input,
 button,
 textarea {
   font: inherit;
+}
+
+/* Cozy glass cards */
+.glass-card {
+  background: color-mix(in srgb, var(--color-card) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 90%, transparent);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
