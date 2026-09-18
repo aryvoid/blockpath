@@ -8,29 +8,58 @@ import {
 import appCss from "../styles.css?url";
 
 const SITE_URL = "https://blockpath.vercel.app";
-const TITLE = "Blockpath — Minecraft Coordinate Calculator";
+const TITLE =
+  "Minecraft Distance Calculator — Coordinates, Heading & Travel Time | Blockpath";
 const DESCRIPTION =
-  "Free Minecraft coordinate distance calculator. Get horizontal & 3D distance, compass heading, travel time (walk, horse, ice boat, elytra), Nether pairing, relative map, and save waypoints.";
+  "Calculate Minecraft distance between coordinates instantly. Get compass heading, walk/sprint/horse/ice boat/elytra travel time, Nether portal pairing, relative map, and save waypoints. Free online tool.";
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: "Blockpath",
-  url: SITE_URL,
-  description: DESCRIPTION,
-  applicationCategory: "UtilityApplication",
-  operatingSystem: "Any",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
-  author: {
-    "@type": "Person",
-    name: "aryvoid",
-    url: "https://github.com/aryvoid",
-  },
-  keywords: "Minecraft, coordinates, distance calculator, Nether, waypoints",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      name: "Blockpath",
+      url: SITE_URL,
+      description: DESCRIPTION,
+      applicationCategory: "UtilityApplication",
+      operatingSystem: "Any",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      author: {
+        "@type": "Person",
+        name: "aryvoid",
+        url: "https://github.com/aryvoid",
+      },
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "How do I calculate distance between two Minecraft coordinates?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Paste your current position and destination (X Y Z from F3) into Blockpath. It calculates horizontal distance, full 3D distance, chunk distance, and the exact compass heading you should face.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "How do I travel faster in Minecraft?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Compare walk, sprint, horse, ice boat, and elytra travel times. For long trips use a Nether portal highway (1 Nether block ≈ 8 Overworld blocks) or ice boat roads and elytra with fireworks.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "How do Nether coordinates work?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Divide Overworld X and Z by 8 to get the matching Nether portal spot. Blockpath shows both Nether and Overworld paired coordinates so you can link portals accurately.",
+          },
+        },
+      ],
+    },
+  ],
 };
 
 export const Route = createRootRoute({
@@ -43,7 +72,7 @@ export const Route = createRootRoute({
       {
         name: "keywords",
         content:
-          "minecraft calculator, minecraft coordinates, minecraft distance, nether coordinates, minecraft heading, minecraft waypoints, coordinate calculator, blockpath",
+          "minecraft distance calculator, calculate minecraft distance, minecraft coordinates calculator, minecraft travel time, how to go fast in minecraft, nether coordinates, minecraft heading, minecraft waypoints, ice boat speed, elytra travel time, blockpath",
       },
       { name: "author", content: "aryvoid" },
       { name: "creator", content: "aryvoid" },
