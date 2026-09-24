@@ -17,19 +17,19 @@ function rgbToHex(r: number, g: number, b: number) {
   return [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
 }
 
+const PRESETS = [
+  ["#ff6bcb", "#6bcbff"],
+  ["#ff0000", "#ffff00", "#00ff00", "#00ffff", "#0000ff", "#ff00ff"],
+  ["#fbbf24", "#f59e0b", "#ea580c"],
+  ["#22d3ee", "#a78bfa", "#f472b6"],
+  ["#86efac", "#4ade80", "#16a34a"],
+];
+
 export function GradientTool() {
   const [text, setText] = useState("CuteSMP");
-  const [c1, setC1] = useState("#ff6bcb");
-  const [c2, setC2] = useState("#6bcbff");
-  const [c3, setC3] = useState("#");
+  const [colors, setColors] = useState<string[]>(["#ff6bcb", "#6bcbff"]);
   const [bold, setBold] = useState(false);
   const [copied, setCopied] = useState("");
-
-  const colors = useMemo(() => {
-    const list = [c1, c2];
-    if (/^#[0-9a-fA-F]{6}$/.test(c3)) list.push(c3);
-    return list;
-  }, [c1, c2, c3]);
 
   const miniMessage = useMemo(() => {
     const stops = colors.map((c) => c.toLowerCase()).join(":");
@@ -39,12 +39,11 @@ export function GradientTool() {
 
   const perCharEssentials = useMemo(() => {
     const chars = [...text];
-    if (chars.length === 0) return "";
+    if (chars.length === 0 || colors.length === 0) return "";
     const rgbs = colors.map(hexToRgb);
     return chars
       .map((ch, i) => {
         const t = chars.length === 1 ? 0 : i / (chars.length - 1);
-        // multi-stop linear
         const seg = t * (rgbs.length - 1);
         const i0 = Math.floor(seg);
         const i1 = Math.min(i0 + 1, rgbs.length - 1);
@@ -79,16 +78,32 @@ export function GradientTool() {
     }
   };
 
+  const setColorAt = (index: number, value: string) => {
+    setColors((prev) => prev.map((c, i) => (i === index ? value : c)));
+  };
+
+  const addColor = () => {
+    if (colors.length >= 8) return;
+    setColors((prev) => [...prev, "#ffffff"]);
+  };
+
+  const removeColor = (index: number) => {
+    if (colors.length <= 2) return;
+    setColors((prev) => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <p className="text-sm text-muted">
         CuteSMP / modern SMPs often block normal § codes — use a{" "}
-        <span className="text-accent">gradient tag</span> (MiniMessage). Paste the
-        code into nick / tag plugins that support it.
+        <span className="text-accent">gradient tag</span> (MiniMessage). Add as many
+        colors as you want (2–8).
       </p>
 
       <label className="flex flex-col gap-1.5">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">Name / text</span>
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+          Name / text
+        </span>
         <input
           value={text}
           onChange={(e) => setText(e.target.value.slice(0, 32))}
@@ -97,26 +112,76 @@ export function GradientTool() {
         />
       </label>
 
-      <div className="grid grid-cols-3 gap-3">
-        {([
-          ["Color 1", c1, setC1],
-          ["Color 2", c2, setC2],
-          ["Color 3 (opt)", c3 === "#" ? "#ffffff" : c3, (v: string) => setC3(v)],
-        ] as const).map(([label, val, set]) => (
-          <label key={label} className="flex flex-col gap-1.5">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">{label}</span>
-            <input
-              type="color"
-              value={val.startsWith("#") ? val : `#${val}`}
-              onChange={(e) => set(e.target.value)}
-              className="h-10 w-full cursor-pointer rounded-xl border border-border bg-bg/80"
+      <div>
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+            Colors ({colors.length})
+          </span>
+          <button
+            type="button"
+            onClick={addColor}
+            disabled={colors.length >= 8}
+            className="rounded-lg bg-accent/20 px-2.5 py-1 text-xs font-semibold text-accent hover:bg-accent/30 disabled:opacity-40"
+          >
+            + Add color
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {colors.map((c, i) => (
+            <div key={i} className="flex flex-col items-center gap-1">
+              <input
+                type="color"
+                value={c}
+                onChange={(e) => setColorAt(i, e.target.value)}
+                className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-bg/80"
+                title={`Color ${i + 1}`}
+              />
+              <div className="flex items-center gap-1">
+                <span className="font-mono text-[10px] text-muted">{i + 1}</span>
+                {colors.length > 2 && (
+                  <button
+                    type="button"
+                    onClick={() => removeColor(i)}
+                    className="text-[10px] text-muted hover:text-red-400"
+                    title="Remove"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+          Presets
+        </span>
+        <div className="mt-1.5 flex flex-wrap gap-1.5">
+          {PRESETS.map((p, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setColors([...p])}
+              className="h-7 overflow-hidden rounded-lg border border-border"
+              style={{
+                width: 48,
+                background: `linear-gradient(90deg, ${p.join(",")})`,
+              }}
+              title="Apply preset"
             />
-          </label>
-        ))}
+          ))}
+        </div>
       </div>
 
       <label className="flex items-center gap-2 text-sm text-muted">
-        <input type="checkbox" checked={bold} onChange={(e) => setBold(e.target.checked)} className="accent-[var(--color-accent)]" />
+        <input
+          type="checkbox"
+          checked={bold}
+          onChange={(e) => setBold(e.target.checked)}
+          className="accent-[var(--color-accent)]"
+        />
         Bold
       </label>
 
@@ -157,7 +222,9 @@ function OutputRow({
   return (
     <div className="rounded-xl border border-border/60 bg-bg/40 p-3">
       <div className="mb-1.5 flex items-center justify-between gap-2">
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">{title}</span>
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
+          {title}
+        </span>
         <button
           type="button"
           onClick={onCopy}
