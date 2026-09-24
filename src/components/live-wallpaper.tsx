@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { loadTheme, type ThemeId } from "@/lib/theme";
+
 const ITEMS = [
   { file: "Invicon_Diamond_Sword.png", x: "4%", y: "10%", delay: "0s", size: 58, glow: "#5eead4" },
   { file: "Invicon_Ender_Pearl.png", x: "88%", y: "12%", delay: "0.7s", size: 54, glow: "#67e8f9" },
@@ -13,14 +16,71 @@ const ITEMS = [
 
 const WIKI = "https://minecraft.wiki/images";
 
+/** Biome shader grades on the shared landscape video */
+const SHADERS: Record<
+  ThemeId,
+  {
+    videoFilter: string;
+    overlay: string;
+    fog: string;
+    particles?: "embers" | "void" | "none";
+  }
+> = {
+  overworld: {
+    videoFilter: "saturate(1.05) brightness(0.85) contrast(1.05)",
+    overlay:
+      "linear-gradient(180deg, rgba(12,18,16,0.45) 0%, rgba(12,18,16,0.25) 45%, rgba(12,18,16,0.75) 100%)",
+    fog: "radial-gradient(ellipse at center, transparent 40%, rgba(8,12,10,0.5) 100%)",
+    particles: "none",
+  },
+  nether: {
+    videoFilter: "sepia(0.55) hue-rotate(-25deg) saturate(1.8) brightness(0.55) contrast(1.15)",
+    overlay:
+      "linear-gradient(180deg, rgba(80,10,5,0.55) 0%, rgba(120,25,10,0.35) 40%, rgba(20,4,2,0.85) 100%)",
+    fog: "radial-gradient(ellipse at 50% 80%, rgba(255,80,20,0.25) 0%, transparent 50%), radial-gradient(ellipse at center, transparent 30%, rgba(20,4,2,0.7) 100%)",
+    particles: "embers",
+  },
+  end: {
+    videoFilter: "hue-rotate(220deg) saturate(0.85) brightness(0.45) contrast(1.2)",
+    overlay:
+      "linear-gradient(180deg, rgba(20,8,40,0.65) 0%, rgba(40,15,70,0.4) 45%, rgba(8,4,18,0.9) 100%)",
+    fog: "radial-gradient(ellipse at center, rgba(180,120,255,0.12) 0%, transparent 45%), radial-gradient(ellipse at center, transparent 35%, rgba(5,2,15,0.75) 100%)",
+    particles: "void",
+  },
+  light: {
+    videoFilter: "saturate(1.15) brightness(1.15) contrast(0.98)",
+    overlay:
+      "linear-gradient(180deg, rgba(200,220,230,0.25) 0%, rgba(180,210,180,0.15) 50%, rgba(230,240,230,0.45) 100%)",
+    fog: "radial-gradient(ellipse at center, transparent 50%, rgba(255,255,255,0.15) 100%)",
+    particles: "none",
+  },
+};
+
 export function LiveWallpaper() {
+  const [theme, setTheme] = useState<ThemeId>("overworld");
+
+  useEffect(() => {
+    setTheme(loadTheme());
+    const onTheme = (e: Event) => {
+      const id = (e as CustomEvent<ThemeId>).detail;
+      if (id) setTheme(id);
+    };
+    window.addEventListener("blockpath-theme", onTheme);
+    return () => window.removeEventListener("blockpath-theme", onTheme);
+  }, []);
+
+  const shader = SHADERS[theme];
+
   return (
     <div
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
       aria-hidden="true"
+      data-biome={theme}
     >
       <video
-        className="absolute inset-0 size-full object-cover motion-reduce:hidden"
+        key={theme}
+        className="absolute inset-0 size-full object-cover motion-reduce:hidden transition-[filter] duration-700"
+        style={{ filter: shader.videoFilter }}
         autoPlay
         muted
         loop
@@ -32,24 +92,94 @@ export function LiveWallpaper() {
         />
       </video>
 
+      {/* Fallback solid when video hidden (reduced motion) */}
       <div
         className="absolute inset-0 opacity-0 motion-reduce:opacity-100"
         style={{
           background:
-            "linear-gradient(180deg, #1a2332 0%, #243044 40%, #1e2a22 70%, #121816 100%)",
+            theme === "nether"
+              ? "linear-gradient(180deg, #4a1008 0%, #2a0804 50%, #120302 100%)"
+              : theme === "end"
+                ? "linear-gradient(180deg, #1a0a30 0%, #0c0618 50%, #050210 100%)"
+                : theme === "light"
+                  ? "linear-gradient(180deg, #a8c8e0 0%, #c5dcb0 55%, #e8f0e0 100%)"
+                  : "linear-gradient(180deg, #1a2332 0%, #243044 40%, #1e2a22 70%, #121816 100%)",
         }}
       />
 
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0c1210]/55 via-[#0c1210]/40 to-[#0c1210]/80" />
+      {/* Color grade overlay */}
+      <div
+        className="absolute inset-0 transition-opacity duration-700"
+        style={{ background: shader.overlay }}
+      />
 
-      <ItemStickers />
+      {/* Fog / vignette */}
+      <div className="absolute inset-0" style={{ background: shader.fog }} />
 
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(8,12,10,0.5)_100%)]" />
+      {shader.particles === "embers" && <EmberParticles />}
+      {shader.particles === "void" && <VoidParticles />}
+
+      <ItemStickers dim={theme === "light"} />
     </div>
   );
 }
 
-function ItemStickers() {
+function EmberParticles() {
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <style>{`
+        @keyframes emberRise {
+          0% { transform: translateY(0) scale(1); opacity: 0; }
+          15% { opacity: 0.9; }
+          100% { transform: translateY(-100vh) scale(0.4); opacity: 0; }
+        }
+      `}</style>
+      {Array.from({ length: 18 }).map((_, i) => (
+        <span
+          key={i}
+          className="absolute bottom-0 rounded-full"
+          style={{
+            left: `${4 + ((i * 17) % 92)}%`,
+            width: 3 + (i % 4),
+            height: 3 + (i % 4),
+            background: i % 3 === 0 ? "#fbbf24" : "#f97316",
+            boxShadow: "0 0 8px #f97316",
+            animation: `emberRise ${5 + (i % 5)}s linear ${i * 0.35}s infinite`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function VoidParticles() {
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <style>{`
+        @keyframes voidDrift {
+          0%, 100% { opacity: 0.2; transform: scale(1); }
+          50% { opacity: 0.85; transform: scale(1.4); }
+        }
+      `}</style>
+      {Array.from({ length: 24 }).map((_, i) => (
+        <span
+          key={i}
+          className="absolute rounded-full bg-purple-200"
+          style={{
+            left: `${(i * 37) % 100}%`,
+            top: `${(i * 53) % 100}%`,
+            width: 2 + (i % 3),
+            height: 2 + (i % 3),
+            boxShadow: "0 0 6px #c084fc",
+            animation: `voidDrift ${3 + (i % 4)}s ease-in-out ${i * 0.2}s infinite`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ItemStickers({ dim }: { dim?: boolean }) {
   return (
     <div className="absolute inset-0 z-[1]" style={{ perspective: "1000px" }}>
       <style>{`
@@ -96,7 +226,7 @@ function ItemStickers() {
             "--glow": it.glow,
             animation: `bobGlow 6s ease-in-out ${it.delay} infinite`,
             imageRendering: "pixelated",
-            opacity: 0.96,
+            opacity: dim ? 0.55 : 0.96,
             willChange: "transform, filter",
           }}
           loading="eager"

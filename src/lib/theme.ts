@@ -88,4 +88,5 @@ export function applyTheme(id: ThemeId) {
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.setAttribute("content", theme.themeColor);
   localStorage.setItem(KEY, id);
+  window.dispatchEvent(new CustomEvent("blockpath-theme", { detail: id }));
 }
