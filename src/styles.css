@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0e120e;
-  --color-fg: #f2f0e6;
-  --color-muted: #a8b09a;
-  --color-card: #161c16;
-  --color-border: #2c362c;
-  --color-accent: #8fba6b;
-  --color-accent-dim: #6a8f4f;
+  /* Cool forest night — readable on dark video, accent pops */
+  --color-bg: #0c1210;
+  --color-fg: #f0f4f0;
+  --color-muted: #9aab9c;
+  --color-card: #141c18;
+  --color-border: #2a3830;
+  --color-accent: #8fdb7a;
+  --color-accent-dim: #6fb85c;
   --color-warn: #e8c36a;
   --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono: "Cascadia Code", "Fira Code", ui-monospace, monospace;
@@ -34,12 +35,11 @@ textarea {
   font: inherit;
 }
 
-/* Cozy glass cards */
 .glass-card {
-  background: color-mix(in srgb, var(--color-card) 78%, transparent);
+  background: color-mix(in srgb, var(--color-card) 82%, transparent);
   border: 1px solid color-mix(in srgb, var(--color-border) 90%, transparent);
   backdrop-filter: blur(14px);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.35),
+    0 8px 32px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
