@@ -1,14 +1,14 @@
 const ITEMS = [
-  { file: "Invicon_Diamond_Sword.png", x: "5%", y: "12%", delay: "0s", size: 58, glow: "#5eead4" },
-  { file: "Invicon_Ender_Pearl.png", x: "85%", y: "14%", delay: "0.7s", size: 54, glow: "#67e8f9" },
-  { file: "Invicon_Totem_of_Undying.png", x: "7%", y: "64%", delay: "1.4s", size: 60, glow: "#fbbf24" },
-  { file: "Invicon_Bucket_of_Axolotl.png", x: "81%", y: "60%", delay: "0.4s", size: 62, glow: "#f9a8d4" },
-  { file: "Invicon_Diamond.png", x: "16%", y: "34%", delay: "1s", size: 46, glow: "#22d3ee" },
-  { file: "Invicon_Grass_Block.png", x: "72%", y: "38%", delay: "1.6s", size: 54, glow: "#86efac" },
-  { file: "Invicon_Nether_Star.png", x: "44%", y: "6%", delay: "0.5s", size: 50, glow: "#e0e7ff" },
-  { file: "Invicon_Diamond_Pickaxe.png", x: "3%", y: "42%", delay: "1.9s", size: 56, glow: "#5eead4" },
-  { file: "Invicon_Torch.png", x: "88%", y: "36%", delay: "1.2s", size: 44, glow: "#fdba74" },
-  { file: "Invicon_Enchanted_Golden_Apple.png", x: "26%", y: "74%", delay: "2.1s", size: 52, glow: "#fde047" },
+  { file: "Invicon_Diamond_Sword.png", x: "4%", y: "10%", delay: "0s", size: 58, glow: "#5eead4" },
+  { file: "Invicon_Ender_Pearl.png", x: "88%", y: "12%", delay: "0.7s", size: 54, glow: "#67e8f9" },
+  { file: "Invicon_Totem_of_Undying.png", x: "5%", y: "62%", delay: "1.4s", size: 60, glow: "#fbbf24" },
+  { file: "Invicon_Bucket_of_Axolotl.png", x: "86%", y: "58%", delay: "0.4s", size: 62, glow: "#f9a8d4" },
+  { file: "Invicon_Diamond.png", x: "14%", y: "32%", delay: "1s", size: 46, glow: "#22d3ee" },
+  { file: "Invicon_Grass_Block.png", x: "78%", y: "30%", delay: "1.6s", size: 54, glow: "#86efac" },
+  { file: "Invicon_Nether_Star.gif", x: "48%", y: "4%", delay: "0.5s", size: 52, glow: "#e0e7ff" },
+  { file: "Invicon_Diamond_Pickaxe.png", x: "2%", y: "40%", delay: "1.9s", size: 56, glow: "#5eead4" },
+  { file: "Invicon_Torch.png", x: "92%", y: "34%", delay: "1.2s", size: 44, glow: "#fdba74" },
+  { file: "Invicon_Enchanted_Golden_Apple.gif", x: "22%", y: "72%", delay: "2.1s", size: 52, glow: "#fde047" },
 ] as const;
 
 const WIKI = "https://minecraft.wiki/images";
@@ -40,7 +40,6 @@ export function LiveWallpaper() {
         }}
       />
 
-      {/* Cool dark grade — keeps UI readable, lets glows pop */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0c1210]/55 via-[#0c1210]/40 to-[#0c1210]/80" />
 
       <ItemStickers />
