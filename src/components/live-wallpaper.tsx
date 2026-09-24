@@ -1,15 +1,19 @@
-/** Official-style inventory icons via Minecraft Wiki (stable CDN). */
+/**
+ * Floating item stickers — Minecraft Wiki invicons (stable).
+ * 3D-style depth via CSS perspective / rotate (resource-pack models
+ * are in-game JSON, not web PNGs; this gives a clear 3D-card look).
+ */
 const ITEMS = [
-  { file: "Invicon_Diamond_Sword.png", x: "6%", y: "14%", rot: -14, delay: "0s", size: 52 },
-  { file: "Invicon_Ender_Pearl.png", x: "86%", y: "16%", rot: 12, delay: "0.7s", size: 48 },
-  { file: "Invicon_Totem_of_Undying.png", x: "8%", y: "66%", rot: 8, delay: "1.3s", size: 54 },
-  { file: "Invicon_Axolotl_Bucket.png", x: "82%", y: "62%", rot: -10, delay: "0.4s", size: 56 },
-  { file: "Invicon_Diamond.png", x: "18%", y: "36%", rot: 18, delay: "1s", size: 42 },
-  { file: "Invicon_Grass_Block.png", x: "74%", y: "40%", rot: -6, delay: "1.6s", size: 48 },
-  { file: "Invicon_Nether_Star.png", x: "46%", y: "8%", rot: 22, delay: "0.5s", size: 44 },
-  { file: "Invicon_Diamond_Pickaxe.png", x: "4%", y: "44%", rot: -20, delay: "1.9s", size: 50 },
-  { file: "Invicon_Torch.png", x: "90%", y: "38%", rot: 6, delay: "1.2s", size: 40 },
-  { file: "Invicon_Enchanted_Golden_Apple.png", x: "28%", y: "76%", rot: -8, delay: "2.1s", size: 46 },
+  { file: "Invicon_Diamond_Sword.png", x: "5%", y: "12%", rot: -18, delay: "0s", size: 56 },
+  { file: "Invicon_Ender_Pearl.png", x: "85%", y: "14%", rot: 14, delay: "0.6s", size: 52 },
+  { file: "Invicon_Totem_of_Undying.png", x: "7%", y: "64%", rot: 10, delay: "1.2s", size: 58 },
+  { file: "Invicon_Bucket_of_Axolotl.png", x: "81%", y: "60%", rot: -12, delay: "0.3s", size: 60 },
+  { file: "Invicon_Diamond.png", x: "16%", y: "34%", rot: 20, delay: "0.9s", size: 44 },
+  { file: "Invicon_Grass_Block.png", x: "72%", y: "38%", rot: -8, delay: "1.5s", size: 52 },
+  { file: "Invicon_Nether_Star.png", x: "44%", y: "6%", rot: 16, delay: "0.4s", size: 48 },
+  { file: "Invicon_Diamond_Pickaxe.png", x: "3%", y: "42%", rot: -22, delay: "1.8s", size: 54 },
+  { file: "Invicon_Torch.png", x: "88%", y: "36%", rot: 8, delay: "1.1s", size: 42 },
+  { file: "Invicon_Enchanted_Golden_Apple.png", x: "26%", y: "74%", rot: -10, delay: "2s", size: 50 },
 ] as const;
 
 const WIKI = "https://minecraft.wiki/images";
@@ -41,27 +45,32 @@ export function LiveWallpaper() {
         }}
       />
 
-      {/* Lighter dim so stickers stay visible */}
-      <div className="absolute inset-0 bg-gradient-to-b from-bg/25 via-bg/35 to-bg/70" />
+      <div className="absolute inset-0 bg-gradient-to-b from-bg/20 via-bg/30 to-bg/65" />
 
       <ItemStickers />
 
-      {/* Soft center vignette on top (UI readability) */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(12,14,11,0.45)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(12,14,11,0.4)_100%)]" />
     </div>
   );
 }
 
 function ItemStickers() {
   return (
-    <div className="absolute inset-0 z-[1]">
+    <div
+      className="absolute inset-0 z-[1]"
+      style={{ perspective: "900px" }}
+    >
       <style>{`
-        @keyframes floaty {
-          0%, 100% { transform: translateY(0) rotate(var(--r)) scale(1); }
-          50% { transform: translateY(-16px) rotate(var(--r)) scale(1.06); }
+        @keyframes float3d {
+          0%, 100% {
+            transform: translateY(0) rotateY(var(--ry)) rotateZ(var(--rz)) scale(1);
+          }
+          50% {
+            transform: translateY(-18px) rotateY(calc(var(--ry) + 12deg)) rotateZ(var(--rz)) scale(1.08);
+          }
         }
       `}</style>
-      {ITEMS.map((it) => (
+      {ITEMS.map((it, i) => (
         <img
           key={it.file}
           src={`${WIKI}/${it.file}`}
@@ -74,12 +83,15 @@ function ItemStickers() {
             top: it.y,
             width: it.size,
             height: it.size,
-            // @ts-expect-error CSS custom property
-            "--r": `${it.rot}deg`,
-            animation: `floaty 5.5s ease-in-out ${it.delay} infinite`,
-            filter: "drop-shadow(0 4px 10px rgba(0,0,0,0.75))",
+            // @ts-expect-error CSS vars
+            "--ry": `${i % 2 === 0 ? 18 : -18}deg`,
+            // @ts-expect-error CSS vars
+            "--rz": `${it.rot}deg`,
+            animation: `float3d 5.5s ease-in-out ${it.delay} infinite`,
+            filter: "drop-shadow(4px 8px 12px rgba(0,0,0,0.65))",
             imageRendering: "pixelated",
-            opacity: 0.92,
+            opacity: 0.95,
+            transformStyle: "preserve-3d",
           }}
           loading="eager"
           decoding="async"
