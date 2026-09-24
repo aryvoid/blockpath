@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  /* Cool forest night — readable on dark video, accent pops */
   --color-bg: #0c1210;
   --color-fg: #f0f4f0;
   --color-muted: #9aab9c;
@@ -27,6 +26,7 @@ body {
   font-family: var(--font-sans);
   background: var(--color-bg);
   color: var(--color-fg);
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 input,

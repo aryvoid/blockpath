@@ -12,6 +12,7 @@ const TITLE =
   "Minecraft Distance Calculator — Coordinates, Heading & Travel Time | Blockpath";
 const DESCRIPTION =
   "Calculate Minecraft distance between coordinates instantly. Get compass heading, walk/sprint/horse/ice boat/elytra travel time, Nether portal pairing, relative map, and save waypoints. Free online tool.";
+const OG_IMAGE = `${SITE_URL}/og.png`;
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -29,6 +30,7 @@ const jsonLd = {
         name: "aryvoid",
         url: "https://github.com/aryvoid",
       },
+      image: OG_IMAGE,
     },
     {
       "@type": "FAQPage",
@@ -66,7 +68,7 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
       {
@@ -76,7 +78,11 @@ export const Route = createRootRoute({
       },
       { name: "author", content: "aryvoid" },
       { name: "creator", content: "aryvoid" },
-      { name: "theme-color", content: "#0e120e" },
+      { name: "theme-color", content: "#0c1210" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "Blockpath" },
       { name: "robots", content: "index, follow" },
       { name: "googlebot", content: "index, follow" },
       {
@@ -89,12 +95,19 @@ export const Route = createRootRoute({
       { property: "og:description", content: DESCRIPTION },
       { property: "og:url", content: SITE_URL },
       { property: "og:locale", content: "en_US" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:image", content: OG_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "Blockpath — Minecraft tools" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: TITLE },
       { name: "twitter:description", content: DESCRIPTION },
+      { name: "twitter:image", content: OG_IMAGE },
     ],
     links: [
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: "/icon-192.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "canonical", href: SITE_URL },
       { rel: "stylesheet", href: appCss },
     ],

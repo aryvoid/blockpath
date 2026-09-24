@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Calculator } from "@/components/calculator";
 import { GradientTool } from "@/components/gradient-tool";
 import { EnchantTool } from "@/components/enchant-tool";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { cn } from "@/lib/utils";
 
 type Tab = "distance" | "gradient" | "enchants";
@@ -24,6 +25,9 @@ export function ToolShell() {
         <p className="mt-1.5 text-sm text-muted">
           Minecraft tools — distance · gradient names · enchant planner
         </p>
+        <div className="mt-3">
+          <ThemeSwitcher />
+        </div>
       </header>
 
       <nav className="flex flex-wrap justify-center gap-1.5 rounded-2xl border border-border/80 bg-card/70 p-1.5 shadow-xl backdrop-blur-md">
