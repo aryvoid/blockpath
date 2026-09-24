@@ -35,7 +35,7 @@ function useLocalWaypoints() {
   return { list, persist };
 }
 
-export function Calculator() {
+export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
   const [fromRaw, setFromRaw] = useState("0 64 0");
   const [toRaw, setToRaw] = useState("2329 66 1745");
   const [name, setName] = useState("");
@@ -89,16 +89,22 @@ export function Calculator() {
     persist(list.filter((w) => w.id !== id));
   };
 
+  const wrap = embedded
+    ? "flex flex-col gap-4"
+    : "relative z-10 mx-auto flex min-h-dvh max-w-3xl flex-col gap-5 px-4 py-8 sm:px-6";
+
   return (
-    <div className="relative z-10 mx-auto flex min-h-dvh max-w-3xl flex-col gap-5 px-4 py-8 sm:px-6">
-      <header className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-fg drop-shadow-sm sm:text-4xl">
-          Blockpath
-        </h1>
-        <p className="mt-1.5 text-sm text-muted">
-          Minecraft coordinate distance · heading · travel time · Nether pairing
-        </p>
-      </header>
+    <div className={wrap}>
+      {!embedded && (
+        <header className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-fg drop-shadow-sm sm:text-4xl">
+            Blockpath
+          </h1>
+          <p className="mt-1.5 text-sm text-muted">
+            Minecraft coordinate distance · heading · travel time · Nether pairing
+          </p>
+        </header>
+      )}
 
       <section className="grid gap-3 rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
@@ -211,7 +217,9 @@ export function Calculator() {
         </ul>
       </section>
 
-      <footer className="pb-4 text-center text-xs text-muted/80">Blockpath · coordinates stay in your browser</footer>
+      {!embedded && (
+        <p className="pb-1 text-center text-xs text-muted/70">Coordinates stay in your browser</p>
+      )}
     </div>
   );
 }
