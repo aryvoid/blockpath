@@ -65,7 +65,7 @@ export function EnchantTool() {
             type="button"
             onClick={() => onItem(it.id)}
             className={cn(
-              "rounded-lg px-2 py-1.5 text-center text-[11px] font-medium leading-tight transition sm:text-xs",
+              "flex min-h-[2.25rem] items-center justify-center rounded-lg px-1.5 py-1.5 text-center text-[11px] font-medium leading-tight transition sm:min-h-0 sm:px-2 sm:text-xs",
               item === it.id
                 ? "bg-accent text-bg shadow-sm"
                 : "bg-bg/50 text-muted hover:bg-bg hover:text-fg",

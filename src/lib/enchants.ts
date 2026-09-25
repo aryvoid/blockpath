@@ -54,8 +54,8 @@ export const ITEMS: { id: ItemId; label: string }[] = [
   { id: "shears", label: "Shears" },
   { id: "flint_and_steel", label: "Flint & Steel" },
   { id: "brush", label: "Brush" },
-  { id: "carrot_on_a_stick", label: "Carrot on a Stick" },
-  { id: "warped_fungus_on_a_stick", label: "Warped Fungus Stick" },
+  { id: "carrot_on_a_stick", label: "Carrot Stick" },
+  { id: "warped_fungus_on_a_stick", label: "Fungus Stick" },
 ];
 
 const ALL: Record<string, Enchant> = {
