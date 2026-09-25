@@ -30,16 +30,16 @@ export function ToolShell() {
         </div>
       </header>
 
-      <nav className="flex flex-wrap justify-center gap-1.5 rounded-2xl border border-border/80 bg-card/70 p-1.5 shadow-xl backdrop-blur-md">
+      <nav className="flex flex-wrap justify-center gap-1 rounded-2xl border border-border/80 bg-card/70 p-1.5 shadow-xl backdrop-blur-md">
         {TABS.map((t) => (
           <button
             key={t.id}
             type="button"
             onClick={() => setTab(t.id)}
             className={cn(
-              "rounded-xl px-4 py-2 text-sm font-semibold transition",
+              "min-w-[5.5rem] flex-1 rounded-xl px-3 py-2 text-sm font-semibold transition sm:flex-none sm:px-4",
               tab === t.id
-                ? "bg-accent text-bg"
+                ? "bg-accent text-bg shadow-sm"
                 : "text-muted hover:bg-bg/50 hover:text-fg",
             )}
           >

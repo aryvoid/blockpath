@@ -52,22 +52,22 @@ export function EnchantTool() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <p className="text-sm text-muted">
+    <div className="flex flex-col gap-5">
+      <p className="text-sm leading-relaxed text-muted">
         Pick a tool / weapon / armor, see every valid enchantment, toggle what you
-        want, and get a sensible anvil combine order (avoid "Too Expensive").
+        want, and get a sensible anvil combine order (avoid &quot;Too Expensive&quot;).
       </p>
 
-      <div className="flex flex-wrap gap-1.5">
+      <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 md:grid-cols-5">
         {ITEMS.map((it) => (
           <button
             key={it.id}
             type="button"
             onClick={() => onItem(it.id)}
             className={cn(
-              "rounded-lg px-2.5 py-1 text-xs font-medium transition",
+              "rounded-lg px-2 py-1.5 text-center text-[11px] font-medium leading-tight transition sm:text-xs",
               item === it.id
-                ? "bg-accent text-bg"
+                ? "bg-accent text-bg shadow-sm"
                 : "bg-bg/50 text-muted hover:bg-bg hover:text-fg",
             )}
           >
@@ -76,7 +76,7 @@ export function EnchantTool() {
         ))}
       </div>
 
-      <ul className="flex flex-col gap-1.5">
+      <ul className="flex flex-col gap-2">
         {list.map((e) => {
           const on = picked.has(e.id);
           const blocked = !on && conflictIds.has(e.id);
@@ -87,22 +87,35 @@ export function EnchantTool() {
                 disabled={blocked}
                 onClick={() => toggle(e)}
                 className={cn(
-                  "flex w-full flex-col rounded-xl border px-3 py-2.5 text-left transition",
+                  "flex w-full flex-col rounded-xl border px-3.5 py-3 text-left transition",
                   on
-                    ? "border-accent/60 bg-accent/15"
+                    ? "border-accent/70 bg-accent/15 shadow-[0_0_0_1px_rgba(143,219,122,0.15)]"
                     : blocked
-                      ? "cursor-not-allowed border-border/40 bg-bg/20 opacity-40"
-                      : "border-border/60 bg-bg/40 hover:border-border",
+                      ? "cursor-not-allowed border-border/30 bg-bg/15 opacity-45"
+                      : "border-border/50 bg-bg/35 hover:border-border hover:bg-bg/50",
                 )}
               >
-                <span className="flex items-center justify-between gap-2">
+                <span className="flex items-center justify-between gap-3">
                   <span className="text-sm font-semibold text-fg">
                     {e.name}{" "}
-                    <span className="font-mono text-xs text-muted">I–{roman(e.max)}</span>
+                    <span className="font-mono text-xs font-normal text-muted">
+                      I–{roman(e.max)}
+                    </span>
                   </span>
-                  <span className="text-xs text-muted">{on ? "Selected" : blocked ? "Conflict" : "Tap"}</span>
+                  <span
+                    className={cn(
+                      "shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                      on
+                        ? "bg-accent/25 text-accent"
+                        : blocked
+                          ? "bg-bg/40 text-muted"
+                          : "bg-bg/60 text-muted",
+                    )}
+                  >
+                    {on ? "On" : blocked ? "Conflict" : "Off"}
+                  </span>
                 </span>
-                <span className="mt-0.5 text-xs text-muted">{e.desc}</span>
+                <span className="mt-1 text-xs leading-snug text-muted">{e.desc}</span>
               </button>
             </li>
           );
@@ -114,7 +127,7 @@ export function EnchantTool() {
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted">
             Suggested anvil order
           </h3>
-          <ol className="mt-2 list-decimal space-y-1.5 pl-4 text-sm text-fg">
+          <ol className="mt-2.5 list-decimal space-y-1.5 pl-4 text-sm">
             {steps.map((s, i) => (
               <li key={i} className="text-muted">
                 <span className="text-fg">{s}</span>
