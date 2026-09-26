@@ -58,6 +58,26 @@ export const ITEMS: { id: ItemId; label: string }[] = [
   { id: "warped_fungus_on_a_stick", label: "Fungus Stick" },
 ];
 
+/** Grouped for cleaner UI — order matches ITEMS */
+export const ITEM_GROUPS: { title: string; ids: ItemId[] }[] = [
+  {
+    title: "Weapons",
+    ids: ["sword", "spear", "axe", "mace", "bow", "crossbow", "trident"],
+  },
+  {
+    title: "Tools",
+    ids: ["pickaxe", "shovel", "hoe", "shears", "brush", "flint_and_steel"],
+  },
+  {
+    title: "Armor",
+    ids: ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "elytra", "shield"],
+  },
+  {
+    title: "Other",
+    ids: ["fishing_rod", "carrot_on_a_stick", "warped_fungus_on_a_stick"],
+  },
+];
+
 const ALL: Record<string, Enchant> = {
   sharpness: { id: "sharpness", name: "Sharpness", max: 5, desc: "Extra melee damage vs all mobs.", weight: 1, conflicts: ["smite", "bane_of_arthropods"] },
   smite: { id: "smite", name: "Smite", max: 5, desc: "Extra damage to undead (zombies, skeletons…).", weight: 1, conflicts: ["sharpness", "bane_of_arthropods", "density", "breach"] },

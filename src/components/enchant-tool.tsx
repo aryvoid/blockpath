@@ -1,12 +1,18 @@
 import { useMemo, useState } from "react";
 import {
   ITEMS,
+  ITEM_GROUPS,
   enchantsFor,
   suggestOrder,
   type Enchant,
   type ItemId,
 } from "@/lib/enchants";
 import { cn } from "@/lib/utils";
+
+const LABEL_BY_ID = Object.fromEntries(ITEMS.map((it) => [it.id, it.label])) as Record<
+  ItemId,
+  string
+>;
 
 export function EnchantTool() {
   const [item, setItem] = useState<ItemId>("sword");
@@ -58,24 +64,35 @@ export function EnchantTool() {
         want, and get a sensible anvil combine order (avoid &quot;Too Expensive&quot;).
       </p>
 
-      <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 md:grid-cols-5">
-        {ITEMS.map((it) => (
-          <button
-            key={it.id}
-            type="button"
-            onClick={() => onItem(it.id)}
-            className={cn(
-              "flex min-h-[2.25rem] items-center justify-center rounded-lg px-1.5 py-1.5 text-center text-[11px] font-medium leading-tight transition sm:min-h-0 sm:px-2 sm:text-xs",
-              item === it.id
-                ? "bg-accent text-bg shadow-sm"
-                : "bg-bg/50 text-muted hover:bg-bg hover:text-fg",
-            )}
-          >
-            {it.label}
-          </button>
+      {/* Grouped item picker */}
+      <div className="flex flex-col gap-3">
+        {ITEM_GROUPS.map((group) => (
+          <div key={group.title}>
+            <h4 className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted/80">
+              {group.title}
+            </h4>
+            <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4">
+              {group.ids.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => onItem(id)}
+                  className={cn(
+                    "flex h-9 items-center justify-center rounded-lg px-1.5 text-center text-[11px] font-medium leading-tight transition sm:h-8 sm:text-xs",
+                    item === id
+                      ? "bg-accent text-bg shadow-sm"
+                      : "bg-bg/50 text-muted hover:bg-bg hover:text-fg",
+                  )}
+                >
+                  {LABEL_BY_ID[id]}
+                </button>
+              ))}
+            </div>
+          </div>
         ))}
       </div>
 
+      {/* Enchant list */}
       <ul className="flex flex-col gap-2">
         {list.map((e) => {
           const on = picked.has(e.id);
