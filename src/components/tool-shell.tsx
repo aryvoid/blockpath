@@ -1,20 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Calculator } from "@/components/calculator";
 import { GradientTool } from "@/components/gradient-tool";
 import { EnchantTool } from "@/components/enchant-tool";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { cn } from "@/lib/utils";
+import { readTab, writeTab, type TabId } from "@/lib/url-state";
 
-type Tab = "distance" | "gradient" | "enchants";
-
-const TABS: { id: Tab; label: string }[] = [
+const TABS: { id: TabId; label: string }[] = [
   { id: "distance", label: "Distance" },
   { id: "gradient", label: "Name gradient" },
   { id: "enchants", label: "Enchants" },
 ];
 
 export function ToolShell() {
-  const [tab, setTab] = useState<Tab>("distance");
+  const [tab, setTab] = useState<TabId>("distance");
+
+  useEffect(() => {
+    setTab(readTab());
+  }, []);
+
+  const onTab = (id: TabId) => {
+    setTab(id);
+    writeTab(id);
+  };
 
   return (
     <div className="relative z-10 mx-auto flex min-h-dvh max-w-3xl flex-col gap-5 px-4 py-8 sm:px-6">
@@ -35,9 +43,9 @@ export function ToolShell() {
           <button
             key={t.id}
             type="button"
-            onClick={() => setTab(t.id)}
+            onClick={() => onTab(t.id)}
             className={cn(
-              "min-w-[5.5rem] flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold transition sm:flex-none sm:px-5",
+              "min-w-[5.5rem] flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200 sm:flex-none sm:px-5",
               tab === t.id
                 ? "accent-pill"
                 : "elevated bg-bg/40 text-muted hover:bg-bg/60 hover:text-fg",
@@ -48,17 +56,19 @@ export function ToolShell() {
         ))}
       </nav>
 
-      {tab === "distance" && <Calculator embedded />}
-      {tab === "gradient" && (
-        <section className="glass-card rounded-2xl p-4 sm:p-5">
-          <GradientTool />
-        </section>
-      )}
-      {tab === "enchants" && (
-        <section className="glass-card rounded-2xl p-4 sm:p-5">
-          <EnchantTool />
-        </section>
-      )}
+      <div className="animate-in fade-in duration-200">
+        {tab === "distance" && <Calculator embedded />}
+        {tab === "gradient" && (
+          <section className="glass-card rounded-2xl p-4 sm:p-5">
+            <GradientTool />
+          </section>
+        )}
+        {tab === "enchants" && (
+          <section className="glass-card rounded-2xl p-4 sm:p-5">
+            <EnchantTool />
+          </section>
+        )}
+      </div>
     </div>
   );
 }
