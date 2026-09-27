@@ -28,6 +28,7 @@ import {
   buildShareUrl,
   copyText,
 } from "@/lib/url-state";
+import { TipsBanner } from "@/components/tips-banner";
 
 function useLocalWaypoints() {
   const [list, setList] = useState<Waypoint[]>(SAMPLE_WAYPOINTS);
@@ -135,6 +136,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
 
   return (
     <div className={wrap}>
+      <TipsBanner />
       {!embedded && (
         <header className="text-center">
           <h1 className="title-glow text-3xl font-bold tracking-tight text-fg sm:text-4xl">Blockpath</h1>
@@ -227,17 +229,53 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
           </div>
 
           <div className="glass-card rounded-2xl p-4">
-            <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">Nether / Overworld pairing</h2>
+            <h2 className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted">Portal linker</h2>
+            <p className="mb-3 text-xs text-muted">
+              Build a Nether portal near the linked coords so both sides connect. Y is unchanged by the ÷8 scale.
+            </p>
             <div className="grid gap-3 sm:grid-cols-2">
-              <PairBlock title="These coords → Nether" a={stats.netherFrom} b={stats.netherTo} labelA="From" labelB="To" />
-              <PairBlock title="If Nether → Overworld targets" a={stats.owFrom} b={stats.owTo} labelA="From" labelB="To" />
+              <PortalPair
+                title="Overworld → Nether"
+                a={stats.netherFrom}
+                b={stats.netherTo}
+                labelA="From portal"
+                labelB="To portal"
+                onCopy={async (v) => {
+                  const ok = await copyText(`${v.x} ${v.y} ${v.z}`);
+                  flash(ok ? "portal" : "fail");
+                }}
+              />
+              <PortalPair
+                title="If these are Nether → Overworld"
+                a={stats.owFrom}
+                b={stats.owTo}
+                labelA="From target"
+                labelB="To target"
+                onCopy={async (v) => {
+                  const ok = await copyText(`${v.x} ${v.y} ${v.z}`);
+                  flash(ok ? "portal" : "fail");
+                }}
+              />
             </div>
+            {copied === "portal" && (
+              <p className="mt-2 text-center text-xs font-semibold text-accent">Coords copied</p>
+            )}
+            <p className="mt-3 text-[11px] leading-relaxed text-muted">
+              Tip: link error grows if portals are far from the ideal X/Z. Stay within ~128 Overworld blocks (16 Nether) of the pair for a stable link.
+            </p>
           </div>
         </section>
       ) : (
-        <p className="glass-card rounded-2xl px-4 py-8 text-center text-sm text-muted">
-          Paste valid coordinates (e.g. <code className="rounded bg-bg/60 px-1.5 py-0.5 text-accent">123 64 -456</code> or F3 line) in both fields.
-        </p>
+        <div className="glass-card rounded-2xl px-4 py-8 text-center">
+          <p className="text-sm text-muted">Paste valid coordinates in both fields.</p>
+          <p className="mt-2 font-mono text-xs text-accent">123 64 -456</p>
+          <p className="mt-1 text-xs text-muted">or full F3 line — x / y / z are enough</p>
+          <ul className="mx-auto mt-4 max-w-sm space-y-1.5 text-left text-xs text-muted">
+            <li>• Share link keeps From/To in the URL</li>
+            <li>• Nether block = Overworld ÷ 8 (X & Z only)</li>
+            <li>• Save waypoints for bases / portals</li>
+          </ul>
+        </div>
       )}
 
       <section className="glass-card rounded-2xl p-4">
@@ -319,13 +357,43 @@ function RelativeMap({ from, to }: { from: Vec3; to: Vec3 }) {
   );
 }
 
-function PairBlock({ title, a, b, labelA, labelB }: { title: string; a: Vec3; b: Vec3; labelA: string; labelB: string }) {
+function PortalPair({
+  title,
+  a,
+  b,
+  labelA,
+  labelB,
+  onCopy,
+}: {
+  title: string;
+  a: Vec3;
+  b: Vec3;
+  labelA: string;
+  labelB: string;
+  onCopy: (v: Vec3) => void;
+}) {
   return (
     <div className="rounded-xl bg-bg/40 p-3">
-      <div className="mb-1.5 text-xs text-muted">{title}</div>
-      <div className="space-y-1 font-mono text-sm">
-        <div><span className="text-muted">{labelA}: </span><span className="text-fg">{a.x} {a.y} {a.z}</span></div>
-        <div><span className="text-muted">{labelB}: </span><span className="text-fg">{b.x} {b.y} {b.z}</span></div>
+      <div className="mb-2 text-xs font-medium text-muted">{title}</div>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-wide text-muted">{labelA}</div>
+            <div className="font-mono text-sm text-fg">{a.x} {a.y} {a.z}</div>
+          </div>
+          <button type="button" onClick={() => onCopy(a)} className="shrink-0 rounded-lg px-2 py-1 text-[10px] font-semibold text-accent hover:bg-accent/15">
+            Copy
+          </button>
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-wide text-muted">{labelB}</div>
+            <div className="font-mono text-sm text-fg">{b.x} {b.y} {b.z}</div>
+          </div>
+          <button type="button" onClick={() => onCopy(b)} className="shrink-0 rounded-lg px-2 py-1 text-[10px] font-semibold text-accent hover:bg-accent/15">
+            Copy
+          </button>
+        </div>
       </div>
     </div>
   );
