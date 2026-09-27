@@ -1,58 +1,57 @@
 import { useEffect, useState } from "react";
 import { loadTheme, type ThemeId } from "@/lib/theme";
 
+/** Fresh sticker set — different from previous swords/grass layout */
 const ITEMS = [
-  { file: "Invicon_Diamond_Sword.png", x: "4%", y: "10%", delay: "0s", size: 58, glow: "#5eead4" },
-  { file: "Invicon_Ender_Pearl.png", x: "88%", y: "12%", delay: "0.7s", size: 54, glow: "#67e8f9" },
-  { file: "Invicon_Totem_of_Undying.png", x: "5%", y: "62%", delay: "1.4s", size: 60, glow: "#fbbf24" },
-  { file: "Invicon_Bucket_of_Axolotl.png", x: "86%", y: "58%", delay: "0.4s", size: 62, glow: "#f9a8d4" },
-  { file: "Invicon_Diamond.png", x: "14%", y: "32%", delay: "1s", size: 46, glow: "#22d3ee" },
-  { file: "Invicon_Grass_Block.png", x: "78%", y: "30%", delay: "1.6s", size: 54, glow: "#86efac" },
-  { file: "Invicon_Nether_Star.gif", x: "48%", y: "4%", delay: "0.5s", size: 52, glow: "#e0e7ff" },
-  { file: "Invicon_Diamond_Pickaxe.png", x: "2%", y: "40%", delay: "1.9s", size: 56, glow: "#5eead4" },
-  { file: "Invicon_Torch.png", x: "92%", y: "34%", delay: "1.2s", size: 44, glow: "#fdba74" },
-  { file: "Invicon_Enchanted_Golden_Apple.gif", x: "22%", y: "72%", delay: "2.1s", size: 52, glow: "#fde047" },
+  { file: "Invicon_Netherite_Sword.png", x: "6%", y: "14%", delay: "0s", size: 56, glow: "#a78bfa" },
+  { file: "Invicon_Elytra.png", x: "84%", y: "10%", delay: "0.6s", size: 60, glow: "#94a3b8" },
+  { file: "Invicon_Shulker_Shell.png", x: "10%", y: "68%", delay: "1.2s", size: 52, glow: "#c084fc" },
+  { file: "Invicon_Amethyst_Shard.png", x: "82%", y: "62%", delay: "0.3s", size: 48, glow: "#e9d5ff" },
+  { file: "Invicon_Heart_of_the_Sea.png", x: "18%", y: "38%", delay: "1.5s", size: 50, glow: "#38bdf8" },
+  { file: "Invicon_Echo_Shard.png", x: "74%", y: "36%", delay: "0.9s", size: 46, glow: "#67e8f9" },
+  { file: "Invicon_Dragon_Egg.png", x: "46%", y: "6%", delay: "0.4s", size: 54, glow: "#c084fc" },
+  { file: "Invicon_Trident.png", x: "4%", y: "48%", delay: "1.8s", size: 58, glow: "#5eead4" },
+  { file: "Invicon_Spyglass.png", x: "90%", y: "42%", delay: "1.1s", size: 44, glow: "#fcd34d" },
+  { file: "Invicon_Sculk_Catalyst.png", x: "28%", y: "78%", delay: "2s", size: 52, glow: "#2dd4bf" },
 ] as const;
 
 const WIKI = "https://minecraft.wiki/images";
 
-/** Biome shader grades on the shared landscape video */
-const SHADERS: Record<
-  ThemeId,
-  {
-    videoFilter: string;
-    overlay: string;
-    fog: string;
-    particles?: "embers" | "void" | "none";
-  }
-> = {
+type Shader = {
+  sky: string;
+  aurora: string;
+  vignette: string;
+  stars: "cool" | "warm" | "void" | "day";
+};
+
+const SHADERS: Record<ThemeId, Shader> = {
   overworld: {
-    videoFilter: "saturate(1.05) brightness(0.85) contrast(1.05)",
-    overlay:
-      "linear-gradient(180deg, rgba(12,18,16,0.45) 0%, rgba(12,18,16,0.25) 45%, rgba(12,18,16,0.75) 100%)",
-    fog: "radial-gradient(ellipse at center, transparent 40%, rgba(8,12,10,0.5) 100%)",
-    particles: "none",
+    sky: "radial-gradient(ellipse 120% 80% at 50% -10%, #1a3a4a 0%, #0c1820 35%, #080e12 70%, #05080a 100%)",
+    aurora:
+      "linear-gradient(115deg, transparent 20%, rgba(56,189,248,0.08) 40%, rgba(52,211,153,0.12) 55%, transparent 75%)",
+    vignette: "radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,0.55) 100%)",
+    stars: "cool",
   },
   nether: {
-    videoFilter: "sepia(0.55) hue-rotate(-25deg) saturate(1.8) brightness(0.55) contrast(1.15)",
-    overlay:
-      "linear-gradient(180deg, rgba(80,10,5,0.55) 0%, rgba(120,25,10,0.35) 40%, rgba(20,4,2,0.85) 100%)",
-    fog: "radial-gradient(ellipse at 50% 80%, rgba(255,80,20,0.25) 0%, transparent 50%), radial-gradient(ellipse at center, transparent 30%, rgba(20,4,2,0.7) 100%)",
-    particles: "embers",
+    sky: "radial-gradient(ellipse 120% 90% at 50% 100%, #5c1808 0%, #2a0a06 40%, #120304 75%, #080102 100%)",
+    aurora:
+      "linear-gradient(160deg, rgba(249,115,22,0.15) 0%, transparent 40%, rgba(220,38,38,0.1) 70%, transparent 100%)",
+    vignette: "radial-gradient(ellipse at center, transparent 30%, rgba(20,4,2,0.7) 100%)",
+    stars: "warm",
   },
   end: {
-    videoFilter: "hue-rotate(220deg) saturate(0.85) brightness(0.45) contrast(1.2)",
-    overlay:
-      "linear-gradient(180deg, rgba(20,8,40,0.65) 0%, rgba(40,15,70,0.4) 45%, rgba(8,4,18,0.9) 100%)",
-    fog: "radial-gradient(ellipse at center, rgba(180,120,255,0.12) 0%, transparent 45%), radial-gradient(ellipse at center, transparent 35%, rgba(5,2,15,0.75) 100%)",
-    particles: "void",
+    sky: "radial-gradient(ellipse 100% 80% at 50% 20%, #2a1850 0%, #120a28 45%, #060310 100%)",
+    aurora:
+      "linear-gradient(200deg, rgba(168,85,247,0.18) 0%, transparent 45%, rgba(99,102,241,0.1) 70%, transparent 100%)",
+    vignette: "radial-gradient(ellipse at center, transparent 30%, rgba(5,2,15,0.75) 100%)",
+    stars: "void",
   },
   light: {
-    videoFilter: "saturate(1.15) brightness(1.15) contrast(0.98)",
-    overlay:
-      "linear-gradient(180deg, rgba(200,220,230,0.25) 0%, rgba(180,210,180,0.15) 50%, rgba(230,240,230,0.45) 100%)",
-    fog: "radial-gradient(ellipse at center, transparent 50%, rgba(255,255,255,0.15) 100%)",
-    particles: "none",
+    sky: "radial-gradient(ellipse 120% 80% at 50% -20%, #c8e0f0 0%, #b8d4c8 40%, #d8e8d8 75%, #eef4ec 100%)",
+    aurora:
+      "linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%)",
+    vignette: "radial-gradient(ellipse at center, transparent 50%, rgba(255,255,255,0.2) 100%)",
+    stars: "day",
   },
 };
 
@@ -77,56 +76,128 @@ export function LiveWallpaper() {
       aria-hidden="true"
       data-biome={theme}
     >
-      <video
-        key={theme}
-        className="absolute inset-0 size-full object-cover motion-reduce:hidden transition-[filter] duration-700"
-        style={{ filter: shader.videoFilter }}
-        autoPlay
-        muted
-        loop
-        playsInline
-      >
-        <source
-          src="https://cdn.pixabay.com/video/2025/05/13/278750_large.mp4"
-          type="video/mp4"
-        />
-      </video>
-
-      {/* Fallback solid when video hidden (reduced motion) */}
       <div
-        className="absolute inset-0 opacity-0 motion-reduce:opacity-100"
-        style={{
-          background:
-            theme === "nether"
-              ? "linear-gradient(180deg, #4a1008 0%, #2a0804 50%, #120302 100%)"
-              : theme === "end"
-                ? "linear-gradient(180deg, #1a0a30 0%, #0c0618 50%, #050210 100%)"
-                : theme === "light"
-                  ? "linear-gradient(180deg, #a8c8e0 0%, #c5dcb0 55%, #e8f0e0 100%)"
-                  : "linear-gradient(180deg, #1a2332 0%, #243044 40%, #1e2a22 70%, #121816 100%)",
-        }}
+        className="absolute inset-0 transition-[background] duration-700"
+        style={{ background: shader.sky }}
       />
 
-      {/* Color grade overlay */}
       <div
-        className="absolute inset-0 transition-opacity duration-700"
-        style={{ background: shader.overlay }}
+        className="absolute inset-0 opacity-90 transition-opacity duration-700 motion-reduce:opacity-40"
+        style={{ background: shader.aurora }}
       />
 
-      {/* Fog / vignette */}
-      <div className="absolute inset-0" style={{ background: shader.fog }} />
+      <DriftBlobs theme={theme} />
+      <StarField mode={shader.stars} />
 
-      {shader.particles === "embers" && <EmberParticles />}
-      {shader.particles === "void" && <VoidParticles />}
+      <div className="absolute inset-0" style={{ background: shader.vignette }} />
+
+      {theme === "nether" && <EmberParticles />}
+      {theme === "end" && <VoidParticles />}
 
       <ItemStickers dim={theme === "light"} />
     </div>
   );
 }
 
+function DriftBlobs({ theme }: { theme: ThemeId }) {
+  const colors =
+    theme === "nether"
+      ? ["rgba(249,115,22,0.12)", "rgba(220,38,38,0.1)"]
+      : theme === "end"
+        ? ["rgba(168,85,247,0.14)", "rgba(99,102,241,0.1)"]
+        : theme === "light"
+          ? ["rgba(255,255,255,0.25)", "rgba(186,230,253,0.2)"]
+          : ["rgba(34,211,238,0.1)", "rgba(52,211,153,0.08)"];
+
+  return (
+    <div className="absolute inset-0 overflow-hidden motion-reduce:hidden">
+      <style>{`
+        @keyframes blobDrift {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(4%, -3%) scale(1.08); }
+          66% { transform: translate(-3%, 2%) scale(0.95); }
+        }
+      `}</style>
+      <div
+        className="absolute rounded-full blur-3xl"
+        style={{
+          width: "55vmax",
+          height: "55vmax",
+          left: "-10%",
+          top: "10%",
+          background: colors[0],
+          animation: "blobDrift 22s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="absolute rounded-full blur-3xl"
+        style={{
+          width: "45vmax",
+          height: "45vmax",
+          right: "-5%",
+          bottom: "5%",
+          background: colors[1],
+          animation: "blobDrift 28s ease-in-out infinite reverse",
+        }}
+      />
+    </div>
+  );
+}
+
+function StarField({ mode }: { mode: Shader["stars"] }) {
+  if (mode === "day") {
+    return (
+      <div className="absolute inset-0 overflow-hidden opacity-40 motion-reduce:opacity-20">
+        {Array.from({ length: 12 }).map((_, i) => (
+          <span
+            key={i}
+            className="absolute rounded-full bg-white/60"
+            style={{
+              left: `${(i * 41) % 100}%`,
+              top: `${(i * 29) % 55}%`,
+              width: 2 + (i % 2),
+              height: 2 + (i % 2),
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  const color =
+    mode === "warm" ? "#fdba74" : mode === "void" ? "#e9d5ff" : "#e0f2fe";
+  const count = mode === "void" ? 36 : 48;
+
+  return (
+    <div className="absolute inset-0 overflow-hidden motion-reduce:opacity-50">
+      <style>{`
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.15; transform: scale(0.8); }
+          50% { opacity: 0.95; transform: scale(1.15); }
+        }
+      `}</style>
+      {Array.from({ length: count }).map((_, i) => (
+        <span
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            left: `${(i * 47 + 13) % 100}%`,
+            top: `${(i * 31 + 7) % 100}%`,
+            width: 1 + (i % 3),
+            height: 1 + (i % 3),
+            background: color,
+            boxShadow: `0 0 ${3 + (i % 4)}px ${color}`,
+            animation: `twinkle ${2.5 + (i % 5) * 0.6}s ease-in-out ${i * 0.15}s infinite`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 function EmberParticles() {
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden motion-reduce:hidden">
       <style>{`
         @keyframes emberRise {
           0% { transform: translateY(0) scale(1); opacity: 0; }
@@ -134,7 +205,7 @@ function EmberParticles() {
           100% { transform: translateY(-100vh) scale(0.4); opacity: 0; }
         }
       `}</style>
-      {Array.from({ length: 18 }).map((_, i) => (
+      {Array.from({ length: 16 }).map((_, i) => (
         <span
           key={i}
           className="absolute bottom-0 rounded-full"
@@ -154,14 +225,14 @@ function EmberParticles() {
 
 function VoidParticles() {
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden motion-reduce:hidden">
       <style>{`
         @keyframes voidDrift {
           0%, 100% { opacity: 0.2; transform: scale(1); }
           50% { opacity: 0.85; transform: scale(1.4); }
         }
       `}</style>
-      {Array.from({ length: 24 }).map((_, i) => (
+      {Array.from({ length: 22 }).map((_, i) => (
         <span
           key={i}
           className="absolute rounded-full bg-purple-200"
@@ -185,23 +256,23 @@ function ItemStickers({ dim }: { dim?: boolean }) {
       <style>{`
         @keyframes bobGlow {
           0% {
-            transform: translate3d(0, 0, 0) rotateY(-16deg) rotateZ(-6deg) scale(1);
+            transform: translate3d(0, 0, 0) rotateY(-12deg) rotateZ(-4deg) scale(1);
             filter: drop-shadow(0 0 6px var(--glow)) drop-shadow(0 8px 14px rgba(0,0,0,0.55));
           }
           25% {
-            transform: translate3d(4px, -10px, 0) rotateY(8deg) rotateZ(4deg) scale(1.06);
+            transform: translate3d(3px, -8px, 0) rotateY(6deg) rotateZ(3deg) scale(1.05);
             filter: drop-shadow(0 0 14px var(--glow)) drop-shadow(0 10px 16px rgba(0,0,0,0.5));
           }
           50% {
-            transform: translate3d(0, -18px, 0) rotateY(18deg) rotateZ(6deg) scale(1.1);
+            transform: translate3d(0, -14px, 0) rotateY(14deg) rotateZ(5deg) scale(1.08);
             filter: drop-shadow(0 0 18px var(--glow)) drop-shadow(0 12px 18px rgba(0,0,0,0.45));
           }
           75% {
-            transform: translate3d(-4px, -10px, 0) rotateY(4deg) rotateZ(-4deg) scale(1.06);
+            transform: translate3d(-3px, -8px, 0) rotateY(2deg) rotateZ(-3deg) scale(1.05);
             filter: drop-shadow(0 0 12px var(--glow)) drop-shadow(0 10px 16px rgba(0,0,0,0.5));
           }
           100% {
-            transform: translate3d(0, 0, 0) rotateY(-16deg) rotateZ(-6deg) scale(1);
+            transform: translate3d(0, 0, 0) rotateY(-12deg) rotateZ(-4deg) scale(1);
             filter: drop-shadow(0 0 6px var(--glow)) drop-shadow(0 8px 14px rgba(0,0,0,0.55));
           }
         }
@@ -224,9 +295,9 @@ function ItemStickers({ dim }: { dim?: boolean }) {
             height: it.size,
             // @ts-expect-error CSS var
             "--glow": it.glow,
-            animation: `bobGlow 6s ease-in-out ${it.delay} infinite`,
+            animation: `bobGlow 7s ease-in-out ${it.delay} infinite`,
             imageRendering: "pixelated",
-            opacity: dim ? 0.55 : 0.96,
+            opacity: dim ? 0.5 : 0.92,
             willChange: "transform, filter",
           }}
           loading="eager"
