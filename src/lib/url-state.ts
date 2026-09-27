@@ -1,8 +1,8 @@
 /** Lightweight URL query helpers (no router dependency). */
 
-export type TabId = "distance" | "gradient" | "enchants";
+export type TabId = "distance" | "gradient" | "enchants" | "xp";
 
-const TAB_IDS: TabId[] = ["distance", "gradient", "enchants"];
+const TAB_IDS: TabId[] = ["distance", "gradient", "enchants", "xp"];
 
 export function readTab(): TabId {
   if (typeof window === "undefined") return "distance";
