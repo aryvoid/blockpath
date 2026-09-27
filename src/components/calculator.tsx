@@ -97,7 +97,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
     <div className={wrap}>
       {!embedded && (
         <header className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-fg drop-shadow-sm sm:text-4xl">
+          <h1 className="title-glow text-3xl font-bold tracking-tight text-fg sm:text-4xl">
             Blockpath
           </h1>
           <p className="mt-1.5 text-sm text-muted">
@@ -106,7 +106,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
         </header>
       )}
 
-      <section className="grid gap-3 rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md sm:grid-cols-2">
+      <section className="glass-card grid gap-3 rounded-2xl p-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
             From (current)
@@ -149,7 +149,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="flex items-center justify-center gap-5 rounded-2xl border border-border/80 bg-card/70 p-5 shadow-xl backdrop-blur-md">
+            <div className="glass-card flex items-center justify-center gap-5 rounded-2xl p-5">
               <Compass yaw={stats.yaw} />
               <div className="text-sm">
                 <div className="text-muted">
@@ -160,7 +160,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md">
+            <div className="glass-card rounded-2xl p-4">
               <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted">
                 Relative map (N ↑)
               </h2>
@@ -168,7 +168,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md">
+          <div className="glass-card rounded-2xl p-4">
             <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
               Travel time (approx · horizontal)
             </h2>
@@ -182,7 +182,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md">
+          <div className="glass-card rounded-2xl p-4">
             <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
               Nether / Overworld pairing
             </h2>
@@ -193,16 +193,16 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
           </div>
         </section>
       ) : (
-        <p className="rounded-2xl border border-border/80 bg-card/60 px-4 py-8 text-center text-sm text-muted backdrop-blur-md">
+        <p className="glass-card rounded-2xl px-4 py-8 text-center text-sm text-muted">
           Paste valid coordinates (e.g. <code className="rounded bg-bg/60 px-1.5 py-0.5 text-accent">123 64 -456</code> or F3 line) in both fields.
         </p>
       )}
 
-      <section className="rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md">
+      <section className="glass-card rounded-2xl p-4">
         <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">Saved waypoints</h2>
         <div className="mb-3 flex flex-wrap gap-2">
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name for current destination" className="min-w-[10rem] flex-1 rounded-xl border border-border bg-bg/80 px-3 py-2 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/30" />
-          <button type="button" onClick={addWaypoint} disabled={!to} className="rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-bg transition hover:bg-accent-dim disabled:opacity-40">Save “To”</button>
+          <button type="button" onClick={addWaypoint} disabled={!to} className="accent-pill rounded-xl px-4 py-2 text-sm font-semibold transition disabled:opacity-40">Save “To”</button>
         </div>
         <ul className="flex flex-col gap-1.5">
           {list.map((w) => (
@@ -226,7 +226,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
 
 function Stat({ label, value, sub, mono }: { label: string; value: string; sub?: string; mono?: boolean }) {
   return (
-    <div className="rounded-2xl border border-border/80 bg-card/70 px-3 py-3.5 text-center shadow-lg backdrop-blur-md">
+    <div className="stat-tile rounded-2xl px-3 py-3.5 text-center">
       <div className="text-[10px] font-semibold uppercase tracking-wider text-muted">{label}</div>
       <div className={cn("mt-1 text-lg font-bold tabular-nums text-fg", mono && "font-mono text-sm sm:text-base")}>{value}</div>
       {sub && <div className="mt-0.5 text-xs text-muted">{sub}</div>}
