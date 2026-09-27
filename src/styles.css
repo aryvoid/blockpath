@@ -26,7 +26,8 @@ body {
   font-family: var(--font-sans);
   background: var(--color-bg);
   color: var(--color-fg);
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  -webkit-font-smoothing: antialiased;
 }
 
 input,
@@ -35,11 +36,113 @@ textarea {
   font: inherit;
 }
 
+/* ── Premium 3D glass surface ─────────────────────────────── */
 .glass-card {
-  background: color-mix(in srgb, var(--color-card) 82%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-border) 90%, transparent);
-  backdrop-filter: blur(14px);
+  background: color-mix(in srgb, var(--color-card) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 2px 4px rgba(0, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.28),
+    0 20px 48px rgba(0, 0, 0, 0.18);
+}
+
+html[data-theme="light"] .glass-card {
+  background: color-mix(in srgb, var(--color-card) 88%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04),
+    0 2px 4px rgba(20, 40, 30, 0.04),
+    0 8px 20px rgba(20, 40, 30, 0.08),
+    0 16px 40px rgba(20, 40, 30, 0.06);
+}
+
+/* ── Raised control (buttons / chips) ─────────────────────── */
+.elevated {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 3px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.elevated:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+html[data-theme="light"] .elevated {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 1px 2px rgba(20, 40, 30, 0.08),
+    0 3px 8px rgba(20, 40, 30, 0.06);
+}
+
+/* ── Accent “pressed / selected” pill ─────────────────────── */
+.accent-pill {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+    0 2px 6px color-mix(in srgb, var(--color-accent) 45%, transparent),
+    0 0 20px color-mix(in srgb, var(--color-accent) 20%, transparent);
+}
+
+html[data-theme="light"] .accent-pill {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.12),
+    0 2px 8px color-mix(in srgb, var(--color-accent) 35%, transparent),
+    0 0 16px color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+
+/* ── Soft inset well (inputs, lists) ──────────────────────── */
+.inset-well {
+  background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .inset-well {
+  box-shadow:
+    inset 0 2px 4px rgba(20, 40, 30, 0.06),
+    inset 0 1px 0 rgba(20, 40, 30, 0.04);
+}
+
+/* ── Title glow ───────────────────────────────────────────── */
+.title-glow {
+  text-shadow:
+    0 0 24px color-mix(in srgb, var(--color-accent) 35%, transparent),
+    0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+html[data-theme="light"] .title-glow {
+  text-shadow:
+    0 0 20px color-mix(in srgb, var(--color-accent) 25%, transparent),
+    0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+/* ── Stat / metric tile ───────────────────────────────────── */
+.stat-tile {
+  background: color-mix(in srgb, var(--color-card) 75%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+  backdrop-filter: blur(12px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="light"] .stat-tile {
+  background: color-mix(in srgb, var(--color-card) 92%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 4px 14px rgba(20, 40, 30, 0.07);
 }

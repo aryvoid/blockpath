@@ -17,30 +17,30 @@ export function ToolShell() {
   const [tab, setTab] = useState<Tab>("distance");
 
   return (
-    <div className="relative z-10 mx-auto flex min-h-dvh max-w-3xl flex-col gap-4 px-4 py-8 sm:px-6">
+    <div className="relative z-10 mx-auto flex min-h-dvh max-w-3xl flex-col gap-5 px-4 py-8 sm:px-6">
       <header className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-fg drop-shadow-sm sm:text-4xl">
+        <h1 className="title-glow text-3xl font-bold tracking-tight text-fg sm:text-4xl">
           Blockpath
         </h1>
         <p className="mt-1.5 text-sm text-muted">
           Minecraft tools — distance · gradient names · enchant planner
         </p>
-        <div className="mt-3">
+        <div className="mt-4">
           <ThemeSwitcher />
         </div>
       </header>
 
-      <nav className="flex flex-wrap justify-center gap-1 rounded-2xl border border-border/80 bg-card/70 p-1.5 shadow-xl backdrop-blur-md">
+      <nav className="glass-card flex flex-wrap justify-center gap-1 rounded-2xl p-1.5">
         {TABS.map((t) => (
           <button
             key={t.id}
             type="button"
             onClick={() => setTab(t.id)}
             className={cn(
-              "min-w-[5.5rem] flex-1 rounded-xl px-3 py-2 text-sm font-semibold transition sm:flex-none sm:px-4",
+              "min-w-[5.5rem] flex-1 rounded-xl px-3 py-2.5 text-sm font-semibold transition sm:flex-none sm:px-5",
               tab === t.id
-                ? "bg-accent text-bg shadow-sm"
-                : "text-muted hover:bg-bg/50 hover:text-fg",
+                ? "accent-pill"
+                : "elevated bg-bg/40 text-muted hover:bg-bg/60 hover:text-fg",
             )}
           >
             {t.label}
@@ -50,12 +50,12 @@ export function ToolShell() {
 
       {tab === "distance" && <Calculator embedded />}
       {tab === "gradient" && (
-        <section className="rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md">
+        <section className="glass-card rounded-2xl p-4 sm:p-5">
           <GradientTool />
         </section>
       )}
       {tab === "enchants" && (
-        <section className="rounded-2xl border border-border/80 bg-card/70 p-4 shadow-xl backdrop-blur-md">
+        <section className="glass-card rounded-2xl p-4 sm:p-5">
           <EnchantTool />
         </section>
       )}
