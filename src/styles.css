@@ -36,7 +36,6 @@ textarea {
   font: inherit;
 }
 
-/* ── Premium 3D glass surface ─────────────────────────────── */
 .glass-card {
   background: color-mix(in srgb, var(--color-card) 78%, transparent);
   border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
@@ -60,7 +59,6 @@ html[data-theme="light"] .glass-card {
     0 16px 40px rgba(20, 40, 30, 0.06);
 }
 
-/* ── Raised control (buttons / chips) ─────────────────────── */
 .elevated {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
@@ -83,7 +81,6 @@ html[data-theme="light"] .elevated {
     0 3px 8px rgba(20, 40, 30, 0.06);
 }
 
-/* ── Accent “pressed / selected” pill ─────────────────────── */
 .accent-pill {
   background: var(--color-accent);
   color: var(--color-bg);
@@ -102,7 +99,6 @@ html[data-theme="light"] .accent-pill {
     0 0 16px color-mix(in srgb, var(--color-accent) 15%, transparent);
 }
 
-/* ── Soft inset well (inputs, lists) ──────────────────────── */
 .inset-well {
   background: color-mix(in srgb, var(--color-bg) 70%, transparent);
   border: 1px solid color-mix(in srgb, var(--color-border) 70%, transparent);
@@ -117,7 +113,6 @@ html[data-theme="light"] .inset-well {
     inset 0 1px 0 rgba(20, 40, 30, 0.04);
 }
 
-/* ── Title glow ───────────────────────────────────────────── */
 .title-glow {
   text-shadow:
     0 0 24px color-mix(in srgb, var(--color-accent) 35%, transparent),
@@ -130,7 +125,6 @@ html[data-theme="light"] .title-glow {
     0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
-/* ── Stat / metric tile ───────────────────────────────────── */
 .stat-tile {
   background: color-mix(in srgb, var(--color-card) 75%, transparent);
   border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
@@ -145,4 +139,15 @@ html[data-theme="light"] .stat-tile {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
     0 4px 14px rgba(20, 40, 30, 0.07);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in {
+  animation: fade-in 0.22s ease-out both;
+}
+.fade-in {
+  animation-name: fade-in;
 }
