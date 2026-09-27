@@ -58,24 +58,11 @@ export const ITEMS: { id: ItemId; label: string }[] = [
   { id: "warped_fungus_on_a_stick", label: "Fungus Stick" },
 ];
 
-/** Grouped for cleaner UI — order matches ITEMS */
 export const ITEM_GROUPS: { title: string; ids: ItemId[] }[] = [
-  {
-    title: "Weapons",
-    ids: ["sword", "spear", "axe", "mace", "bow", "crossbow", "trident"],
-  },
-  {
-    title: "Tools",
-    ids: ["pickaxe", "shovel", "hoe", "shears", "brush", "flint_and_steel"],
-  },
-  {
-    title: "Armor",
-    ids: ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "elytra", "shield"],
-  },
-  {
-    title: "Other",
-    ids: ["fishing_rod", "carrot_on_a_stick", "warped_fungus_on_a_stick"],
-  },
+  { title: "Weapons", ids: ["sword", "spear", "axe", "mace", "bow", "crossbow", "trident"] },
+  { title: "Tools", ids: ["pickaxe", "shovel", "hoe", "shears", "brush", "flint_and_steel"] },
+  { title: "Armor", ids: ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "elytra", "shield"] },
+  { title: "Other", ids: ["fishing_rod", "carrot_on_a_stick", "warped_fungus_on_a_stick"] },
 ];
 
 const ALL: Record<string, Enchant> = {
@@ -152,6 +139,47 @@ const BY_ITEM: Record<ItemId, string[]> = {
 
 export function enchantsFor(item: ItemId): Enchant[] {
   return BY_ITEM[item].map((id) => ALL[id]).filter(Boolean);
+}
+
+export type EnchantPreset = {
+  id: string;
+  label: string;
+  item: ItemId;
+  enchantIds: string[];
+};
+
+export const ENCHANT_PRESETS: EnchantPreset[] = [
+  { id: "god_sword", label: "God Sword", item: "sword", enchantIds: ["sharpness", "knockback", "fire_aspect", "looting", "sweeping_edge", "unbreaking", "mending"] },
+  { id: "smite_sword", label: "Smite Sword", item: "sword", enchantIds: ["smite", "knockback", "fire_aspect", "looting", "sweeping_edge", "unbreaking", "mending"] },
+  { id: "fortune_pick", label: "Fortune Pick", item: "pickaxe", enchantIds: ["efficiency", "fortune", "unbreaking", "mending"] },
+  { id: "silk_pick", label: "Silk Pick", item: "pickaxe", enchantIds: ["efficiency", "silk_touch", "unbreaking", "mending"] },
+  { id: "god_bow", label: "Power Bow", item: "bow", enchantIds: ["power", "punch", "flame", "infinity", "unbreaking"] },
+  { id: "mending_bow", label: "Mending Bow", item: "bow", enchantIds: ["power", "punch", "flame", "mending", "unbreaking"] },
+  { id: "prot_chest", label: "Prot Chest", item: "chestplate", enchantIds: ["protection", "unbreaking", "mending"] },
+  { id: "elytra", label: "Elytra", item: "elytra", enchantIds: ["unbreaking", "mending"] },
+  { id: "depth_boots", label: "Depth Boots", item: "boots", enchantIds: ["protection", "feather_falling", "depth_strider", "soul_speed", "unbreaking", "mending"] },
+  { id: "trident_loyalty", label: "Loyalty Trident", item: "trident", enchantIds: ["loyalty", "channeling", "impaling", "unbreaking", "mending"] },
+];
+
+export function estimateAnvilCost(selected: Enchant[]): {
+  levels: number;
+  note: string;
+  tooExpensive: boolean;
+} {
+  if (selected.length === 0) {
+    return { levels: 0, note: "Select enchants first.", tooExpensive: false };
+  }
+  const base = selected.reduce((s, e) => s + e.weight * e.max, 0);
+  const merges = Math.max(0, selected.length - 1);
+  const layers = Math.ceil(Math.log2(Math.max(selected.length, 1)));
+  const levels = Math.round(base * 0.85 + merges * 2 + layers * 3);
+  const tooExpensive = levels > 39;
+  const note = tooExpensive
+    ? "May hit Too Expensive — merge expensive books first, use a low prior-work item."
+    : levels <= 15
+      ? "Cheap combine — safe on survival."
+      : "Moderate cost — follow the suggested order.";
+  return { levels, note, tooExpensive };
 }
 
 export function suggestOrder(selected: Enchant[]): string[] {
