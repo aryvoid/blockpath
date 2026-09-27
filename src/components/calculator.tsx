@@ -22,6 +22,12 @@ import {
   type Waypoint,
 } from "@/lib/waypoints";
 import { cn } from "@/lib/utils";
+import {
+  readCoordsFromUrl,
+  writeCoordsToUrl,
+  buildShareUrl,
+  copyText,
+} from "@/lib/url-state";
 
 function useLocalWaypoints() {
   const [list, setList] = useState<Waypoint[]>(SAMPLE_WAYPOINTS);
@@ -39,7 +45,41 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
   const [fromRaw, setFromRaw] = useState("0 64 0");
   const [toRaw, setToRaw] = useState("2329 66 1745");
   const [name, setName] = useState("");
+  const [copied, setCopied] = useState<string | null>(null);
   const { list, persist } = useLocalWaypoints();
+
+  useEffect(() => {
+    const { from, to } = readCoordsFromUrl();
+    if (from) setFromRaw(from);
+    if (to) setToRaw(to);
+  }, []);
+
+  useEffect(() => {
+    writeCoordsToUrl(fromRaw, toRaw);
+  }, [fromRaw, toRaw]);
+
+  const flash = (key: string) => {
+    setCopied(key);
+    window.setTimeout(() => setCopied((c) => (c === key ? null : c)), 1500);
+  };
+
+  const onShare = async () => {
+    const url = buildShareUrl(fromRaw, toRaw);
+    const ok = await copyText(url);
+    flash(ok ? "share" : "fail");
+  };
+
+  const onSwap = () => {
+    setFromRaw(toRaw);
+    setToRaw(fromRaw);
+  };
+
+  const onCopyCoords = async (which: "from" | "to") => {
+    const text = (which === "from" ? fromRaw : toRaw).trim();
+    if (!text) return;
+    const ok = await copyText(text);
+    flash(ok ? which : "fail");
+  };
 
   const from = useMemo(() => parseCoords(fromRaw), [fromRaw]);
   const to = useMemo(() => parseCoords(toRaw), [toRaw]);
@@ -97,9 +137,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
     <div className={wrap}>
       {!embedded && (
         <header className="text-center">
-          <h1 className="title-glow text-3xl font-bold tracking-tight text-fg sm:text-4xl">
-            Blockpath
-          </h1>
+          <h1 className="title-glow text-3xl font-bold tracking-tight text-fg sm:text-4xl">Blockpath</h1>
           <p className="mt-1.5 text-sm text-muted">
             Minecraft coordinate distance · heading · travel time · Nether pairing
           </p>
@@ -108,9 +146,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
 
       <section className="glass-card grid gap-3 rounded-2xl p-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-            From (current)
-          </span>
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">From (current)</span>
           <input
             value={fromRaw}
             onChange={(e) => setFromRaw(e.target.value)}
@@ -123,9 +159,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
           />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">
-            To (destination)
-          </span>
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted">To (destination)</span>
           <input
             value={toRaw}
             onChange={(e) => setToRaw(e.target.value)}
@@ -138,6 +172,21 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
           />
         </label>
       </section>
+
+      <div className="flex flex-wrap items-center gap-2">
+        <button type="button" onClick={onSwap} className="elevated rounded-xl bg-bg/45 px-3 py-1.5 text-xs font-semibold text-muted hover:text-fg">
+          ⇄ Swap
+        </button>
+        <button type="button" onClick={() => onCopyCoords("from")} className="elevated rounded-xl bg-bg/45 px-3 py-1.5 text-xs font-semibold text-muted hover:text-fg">
+          {copied === "from" ? "Copied From" : "Copy From"}
+        </button>
+        <button type="button" onClick={() => onCopyCoords("to")} className="elevated rounded-xl bg-bg/45 px-3 py-1.5 text-xs font-semibold text-muted hover:text-fg">
+          {copied === "to" ? "Copied To" : "Copy To"}
+        </button>
+        <button type="button" onClick={onShare} className="accent-pill rounded-xl px-3 py-1.5 text-xs font-semibold">
+          {copied === "share" ? "Link copied!" : "Share link"}
+        </button>
+      </div>
 
       {stats ? (
         <section className="grid gap-4">
@@ -159,19 +208,14 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
                 <div className="mt-0.5 text-xs text-muted">Minecraft yaw</div>
               </div>
             </div>
-
             <div className="glass-card rounded-2xl p-4">
-              <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted">
-                Relative map (N ↑)
-              </h2>
+              <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted">Relative map (N ↑)</h2>
               <RelativeMap from={from!} to={to!} />
             </div>
           </div>
 
           <div className="glass-card rounded-2xl p-4">
-            <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
-              Travel time (approx · horizontal)
-            </h2>
+            <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">Travel time (approx · horizontal)</h2>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {([["Walk", SPEEDS.walk], ["Sprint", SPEEDS.sprint], ["Horse", SPEEDS.horse], ["Ice boat", SPEEDS.iceBoat], ["Elytra", SPEEDS.elytra]] as const).map(([label, speed]) => (
                 <div key={label} className="flex items-baseline justify-between rounded-xl bg-bg/50 px-3 py-2.5">
@@ -183,9 +227,7 @@ export function Calculator({ embedded = false }: { embedded?: boolean } = {}) {
           </div>
 
           <div className="glass-card rounded-2xl p-4">
-            <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">
-              Nether / Overworld pairing
-            </h2>
+            <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-muted">Nether / Overworld pairing</h2>
             <div className="grid gap-3 sm:grid-cols-2">
               <PairBlock title="These coords → Nether" a={stats.netherFrom} b={stats.netherTo} labelA="From" labelB="To" />
               <PairBlock title="If Nether → Overworld targets" a={stats.owFrom} b={stats.owTo} labelA="From" labelB="To" />
@@ -263,7 +305,6 @@ function RelativeMap({ from, to }: { from: Vec3; to: Vec3 }) {
   const scale = (size / 2 - pad) / max;
   const tx = cx + d.x * scale;
   const ty = cy + d.z * scale;
-
   return (
     <svg viewBox={`0 0 ${size} ${size}`} className="mx-auto size-[9rem] rounded-xl bg-bg/40">
       <line x1={cx} y1={0} x2={cx} y2={size} stroke="currentColor" className="text-border" strokeWidth="1" />
