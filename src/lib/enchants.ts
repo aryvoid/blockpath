@@ -169,16 +169,44 @@ export function estimateAnvilCost(selected: Enchant[]): {
   if (selected.length === 0) {
     return { levels: 0, note: "Select enchants first.", tooExpensive: false };
   }
-  const base = selected.reduce((s, e) => s + e.weight * e.max, 0);
-  const merges = Math.max(0, selected.length - 1);
-  const layers = Math.ceil(Math.log2(Math.max(selected.length, 1)));
-  const levels = Math.round(base * 0.85 + merges * 2 + layers * 3);
+  // Simulate pairwise book merges with prior-work penalty (2^n - 1).
+  type Node = { prior: number; cost: number };
+  let nodes: Node[] = [...selected]
+    .sort((a, b) => b.weight * b.max - a.weight * a.max)
+    .map((e) => ({ prior: 0, cost: e.weight * e.max }));
+
+  let totalPlayerLevels = 0;
+  while (nodes.length > 1) {
+    const next: Node[] = [];
+    for (let i = 0; i < nodes.length; i += 2) {
+      if (i + 1 >= nodes.length) {
+        next.push(nodes[i]);
+        break;
+      }
+      const a = nodes[i];
+      const b = nodes[i + 1];
+      const priorA = (1 << a.prior) - 1;
+      const priorB = (1 << b.prior) - 1;
+      const step = a.cost + b.cost + priorA + priorB;
+      totalPlayerLevels += step;
+      next.push({
+        prior: Math.max(a.prior, b.prior) + 1,
+        cost: a.cost + b.cost,
+      });
+    }
+    nodes = next;
+  }
+  if (nodes[0]) {
+    const priorBook = (1 << nodes[0].prior) - 1;
+    totalPlayerLevels += nodes[0].cost + priorBook;
+  }
+  const levels = Math.max(1, Math.round(totalPlayerLevels));
   const tooExpensive = levels > 39;
   const note = tooExpensive
-    ? "May hit Too Expensive — merge expensive books first, use a low prior-work item."
+    ? "May hit Too Expensive (>39). Merge costly books early on a low prior-work item."
     : levels <= 15
       ? "Cheap combine — safe on survival."
-      : "Moderate cost — follow the suggested order.";
+      : "Moderate cost — follow the suggested pairwise order.";
   return { levels, note, tooExpensive };
 }
 
