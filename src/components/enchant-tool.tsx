@@ -42,7 +42,6 @@ export function EnchantTool() {
         next.delete(e.id);
         return next;
       }
-      // remove conflicts
       e.conflicts?.forEach((c) => next.delete(c));
       for (const other of list) {
         if (other.conflicts?.includes(e.id)) next.delete(other.id);
@@ -64,11 +63,10 @@ export function EnchantTool() {
         want, and get a sensible anvil combine order (avoid &quot;Too Expensive&quot;).
       </p>
 
-      {/* Grouped item picker */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3.5">
         {ITEM_GROUPS.map((group) => (
           <div key={group.title}>
-            <h4 className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted/80">
+            <h4 className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted/75">
               {group.title}
             </h4>
             <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-4">
@@ -78,10 +76,10 @@ export function EnchantTool() {
                   type="button"
                   onClick={() => onItem(id)}
                   className={cn(
-                    "flex h-9 items-center justify-center rounded-lg px-1.5 text-center text-[11px] font-medium leading-tight transition sm:h-8 sm:text-xs",
+                    "flex h-9 items-center justify-center rounded-xl px-1.5 text-center text-[11px] font-medium leading-tight transition sm:h-8 sm:text-xs",
                     item === id
-                      ? "bg-accent text-bg shadow-sm"
-                      : "bg-bg/50 text-muted hover:bg-bg hover:text-fg",
+                      ? "accent-pill"
+                      : "elevated bg-bg/45 text-muted hover:bg-bg/65 hover:text-fg",
                   )}
                 >
                   {LABEL_BY_ID[id]}
@@ -92,7 +90,6 @@ export function EnchantTool() {
         ))}
       </div>
 
-      {/* Enchant list */}
       <ul className="flex flex-col gap-2">
         {list.map((e) => {
           const on = picked.has(e.id);
@@ -104,12 +101,12 @@ export function EnchantTool() {
                 disabled={blocked}
                 onClick={() => toggle(e)}
                 className={cn(
-                  "flex w-full flex-col rounded-xl border px-3.5 py-3 text-left transition",
+                  "flex w-full flex-col rounded-2xl border px-3.5 py-3 text-left transition",
                   on
-                    ? "border-accent/70 bg-accent/15 shadow-[0_0_0_1px_rgba(143,219,122,0.15)]"
+                    ? "border-accent/50 bg-accent/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_0_0_1px_color-mix(in_srgb,var(--color-accent)_25%,transparent),0_4px_16px_color-mix(in_srgb,var(--color-accent)_12%,transparent)]"
                     : blocked
-                      ? "cursor-not-allowed border-border/30 bg-bg/15 opacity-45"
-                      : "border-border/50 bg-bg/35 hover:border-border hover:bg-bg/50",
+                      ? "cursor-not-allowed border-border/25 bg-bg/15 opacity-40"
+                      : "elevated border-border/50 bg-bg/30 hover:border-border hover:bg-bg/45",
                 )}
               >
                 <span className="flex items-center justify-between gap-3">
@@ -121,12 +118,12 @@ export function EnchantTool() {
                   </span>
                   <span
                     className={cn(
-                      "shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+                      "shrink-0 rounded-lg px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
                       on
                         ? "bg-accent/25 text-accent"
                         : blocked
                           ? "bg-bg/40 text-muted"
-                          : "bg-bg/60 text-muted",
+                          : "bg-bg/50 text-muted",
                     )}
                   >
                     {on ? "On" : blocked ? "Conflict" : "Off"}
@@ -140,7 +137,7 @@ export function EnchantTool() {
       </ul>
 
       {selected.length > 0 && (
-        <div className="rounded-2xl border border-border/80 bg-bg/50 p-4">
+        <div className="glass-card rounded-2xl p-4">
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted">
             Suggested anvil order
           </h3>
